@@ -4,8 +4,8 @@ import Svg, { SvgProps, Path } from "react-native-svg"
 const UpArrow = (props: SvgProps) => (
   <Svg
     // xmlns="http://www.w3.org/2000/svg"
-    width={800}
-    height={800}
+    width={props.width}
+    height={props.height}
     viewBox="0 0 32 32"
     {...props}
   >
