@@ -4,6 +4,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ConnectionBanner from "./components/ConnectionBanner";
 import ModeCard from "./components/ModeCard";
+import ScreenHeader from "../../components/ScreenHeader";
+import LaptopConnectionStatus from "./components/LaptopConnectionStatus";
 
 type ControlMode = "eye" | "face" | "hand" | null;
 
@@ -11,8 +13,9 @@ export default function ModeSelectionScreen() {
   const router = useRouter();
   const [selectedMode, setSelectedMode] = useState<ControlMode>(null);
 
-  // TODO: Get this from a global connection context
+  // TODO: Get these from global connection context
   const isConnected = false;
+  const connectedLaptopName = "Home Laptop"; // This should come from context
 
   const modes: Array<{
     id: ControlMode;
@@ -49,26 +52,18 @@ export default function ModeSelectionScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Control Mode</Text>
-        <View style={styles.connectionStatus}>
-          <MaterialIcons
-            name={isConnected ? "computer" : "desktop-windows"}
-            size={24}
-            color={isConnected ? "#34C759" : "#FF3B30"}
-          />
-          <Text
-            style={[
-              styles.connectionText,
-              { color: isConnected ? "#34C759" : "#FF3B30" },
-            ]}
-          >
-            {isConnected ? "Connected" : "Not Connected"}
-          </Text>
-        </View>
-      </View>
+      <ScreenHeader
+        title="Control Mode"
+        subtitle="Select your preferred control method"
+        icon="settings-input-component"
+      />
 
       <View style={styles.content}>
+        <LaptopConnectionStatus
+          isConnected={isConnected}
+          connectedLaptopName={connectedLaptopName}
+        />
+
         <ConnectionBanner isConnected={isConnected} />
 
         <Text style={styles.sectionTitle}>Select Control Mode</Text>
@@ -106,28 +101,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F2F2F7",
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5EA",
-  },
-  headerTitle: {
-    fontSize: 34,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  connectionStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  connectionText: {
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: "500",
   },
   content: {
     padding: 20,
