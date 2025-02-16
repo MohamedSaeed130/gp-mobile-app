@@ -1,6 +1,8 @@
 import { Link } from "expo-router";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import ConnectionStatusSection from "../components/ConnectionStatusSection";
+import { useState } from "react";
 
 interface MenuItemProps {
   href: string;
@@ -64,12 +66,21 @@ export default function HomeScreen() {
     },
   ];
 
+  // TODO: Get these from global connection context
+  const [laptopConnected, setLaptopConnected] = useState(false);
+  const [espConnected, setEspConnected] = useState(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Smart Wheelchair</Text>
         <Text style={styles.headerSubtitle}>Welcome back!</Text>
       </View>
+
+      <ConnectionStatusSection
+        laptopConnected={laptopConnected}
+        espConnected={espConnected}
+      />
 
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 22,
