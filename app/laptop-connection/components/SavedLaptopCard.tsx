@@ -101,6 +101,10 @@ const styles = StyleSheet.create({
   deleteButton: {
     padding: 8,
     marginRight: 10,
+    backgroundColor: "#FFF1F0",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#FF3B30",
   },
   connectButton: {
     flexDirection: "row",
@@ -121,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SavedLaptopCard; 
+export default SavedLaptopCard;
