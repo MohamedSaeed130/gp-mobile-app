@@ -5,11 +5,15 @@ import ConnectionStatusCard from "./ConnectionStatusCard";
 interface ConnectionStatusSectionProps {
   laptopConnected: boolean;
   espConnected: boolean;
+  onLaptopDisconnect?: () => void;
+  onEspDisconnect?: () => void;
 }
 
 const ConnectionStatusSection = ({
   laptopConnected,
   espConnected,
+  onLaptopDisconnect,
+  onEspDisconnect,
 }: ConnectionStatusSectionProps) => {
   return (
     <View style={styles.section}>
@@ -18,11 +22,15 @@ const ConnectionStatusSection = ({
         title="Laptop"
         isConnected={laptopConnected}
         icon="computer"
+        href="/laptop-connection"
+        onDisconnect={onLaptopDisconnect}
       />
       <ConnectionStatusCard
         title="Wheelchair"
         isConnected={espConnected}
         icon="bluetooth"
+        href="/esp-connection"
+        onDisconnect={onEspDisconnect}
       />
     </View>
   );
