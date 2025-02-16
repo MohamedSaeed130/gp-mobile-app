@@ -6,7 +6,6 @@ import {
   StyleSheet,
   GestureResponderEvent,
 } from "react-native";
-import { SvgProps } from "react-native-svg";
 
 export interface ControlCardProps {
   Icon: (props: any) => React.JSX.Element;

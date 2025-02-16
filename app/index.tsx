@@ -1,6 +1,6 @@
-import { Link } from 'expo-router';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Link } from "expo-router";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface MenuItemProps {
   href: string;
@@ -28,11 +28,25 @@ const MenuItem = ({ href, title, icon, description, color }: MenuItemProps) => (
 export default function HomeScreen() {
   const menuItems: MenuItemProps[] = [
     {
+      href: "/laptop-connection",
+      title: "Laptop Connection",
+      icon: "laptop",
+      description: "Connect to your laptop for remote control",
+      color: "#5856D6",
+    },
+    {
       href: "/esp-connection",
       title: "Connect Device",
       icon: "bluetooth",
       description: "Set up connection with your wheelchair",
       color: "#007AFF",
+    },
+    {
+      href: "/mode-selection",
+      title: "Control Modes",
+      icon: "settings-input-component",
+      description: "Select your preferred control method",
+      color: "#FF9500",
     },
     {
       href: "/remote-controller",
@@ -76,23 +90,23 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: "#F2F2F7",
   },
   header: {
     padding: 20,
     paddingTop: 60,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
+    borderBottomColor: "#E5E5EA",
   },
   headerTitle: {
     fontSize: 34,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
   },
   headerSubtitle: {
     fontSize: 17,
-    color: '#666',
+    color: "#666",
     marginTop: 5,
   },
   content: {
@@ -100,18 +114,18 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: '600',
-    color: '#000',
+    fontWeight: "600",
+    color: "#000",
     marginBottom: 15,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     marginBottom: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -124,8 +138,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 15,
   },
   textContainer: {
@@ -133,27 +147,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 17,
-    fontWeight: '600',
-    color: '#000',
+    fontWeight: "600",
+    color: "#000",
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginTop: 2,
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderTopWidth: 1,
-    borderTopColor: '#E5E5EA',
+    borderTopColor: "#E5E5EA",
   },
   footerText: {
     fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
 });
