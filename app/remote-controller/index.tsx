@@ -6,6 +6,7 @@ import Controls from "./components/Controls";
 import Road from "./components/controls-icons/Road";
 import Speedometer from "./components/controls-icons/Speedometer";
 import Chip from "./components/controls-icons/Chip";
+import ScreenHeader from '../../components/ScreenHeader';
 
 const activityCardSize = 50;
 const chipSize = 30;
@@ -56,9 +57,11 @@ const RemoteController = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>🎮 ESP32 Remote Controller</Text>
-      </View>
+      <ScreenHeader 
+        title="Remote Control"
+        subtitle="Control your wheelchair movement"
+        icon="gamepad"
+      />
       {renderConnectionStatus()}
       {renderMovementStatus()}
       <FlatList

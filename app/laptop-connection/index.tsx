@@ -7,6 +7,7 @@ import { useWebSocket } from "./hooks/useWebSocket";
 import ScreenHeader from "../../components/ScreenHeader";
 import SavedLaptopsSection from "./components/SavedLaptopsSection";
 import { SavedLaptop } from "./types";
+import CurrentConnection from "./components/CurrentConnection";
 
 export default function LaptopConnectionScreen() {
   const { connect, disconnect, isConnected, isLoading, statusMessage } =
@@ -24,9 +25,12 @@ export default function LaptopConnectionScreen() {
     // Add more saved laptops as needed
   ]);
 
+  // Add state for currently connected laptop
+  const [connectedLaptop, setConnectedLaptop] = useState<SavedLaptop | undefined>();
+
   const handleConnect = (ipAddress: string, port: string, name: string) => {
     connect(ipAddress, port);
-    // If connection is successful, add to saved laptops
+    // If connection is successful, add to saved laptops and set as connected
     if (!isLoading) {
       const newLaptop: SavedLaptop = {
         id: Date.now().toString(),
@@ -36,15 +40,24 @@ export default function LaptopConnectionScreen() {
         lastConnected: new Date().toLocaleString(),
       };
       setSavedLaptops((prev) => [newLaptop, ...prev]);
+      setConnectedLaptop(newLaptop);
     }
   };
 
   const handleSavedLaptopConnect = (laptop: SavedLaptop) => {
     connect(laptop.ipAddress, laptop.port);
+    if (!isLoading) {
+      setConnectedLaptop(laptop);
+    }
   };
 
   const handleDeleteSavedLaptop = (id: string) => {
     setSavedLaptops((prev) => prev.filter((laptop) => laptop.id !== id));
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+    setConnectedLaptop(undefined);
   };
 
   return (
@@ -57,9 +70,9 @@ export default function LaptopConnectionScreen() {
       />
 
       <ScrollView style={styles.content}>
-        <ConnectionStatus
-          isConnected={isConnected}
-          statusMessage={statusMessage}
+        <CurrentConnection 
+          isConnected={isConnected} 
+          connectedLaptop={connectedLaptop}
         />
 
         <ConnectionForm onConnect={handleConnect} isLoading={isLoading} />
@@ -72,7 +85,10 @@ export default function LaptopConnectionScreen() {
         />
 
         {isConnected && (
-          <Pressable style={styles.disconnectButton} onPress={disconnect}>
+          <Pressable 
+            style={styles.disconnectButton} 
+            onPress={handleDisconnect}
+          >
             <MaterialIcons name="link-off" size={24} color="white" />
             <Text style={styles.disconnectText}>Disconnect</Text>
           </Pressable>
