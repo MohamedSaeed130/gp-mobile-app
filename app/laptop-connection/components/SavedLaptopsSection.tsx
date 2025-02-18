@@ -8,6 +8,7 @@ interface SavedLaptopsSectionProps {
   onConnect: (laptop: SavedLaptop) => void;
   onDelete: (id: string) => void;
   isLoading?: boolean;
+  connectingLaptopId: string | null;
 }
 
 const SavedLaptopsSection = ({
@@ -15,6 +16,7 @@ const SavedLaptopsSection = ({
   onConnect,
   onDelete,
   isLoading,
+  connectingLaptopId,
 }: SavedLaptopsSectionProps) => {
   if (laptops.length === 0) {
     return null;
@@ -31,6 +33,7 @@ const SavedLaptopsSection = ({
             onConnect={onConnect}
             onDelete={onDelete}
             isLoading={isLoading}
+            connectingLaptopId={connectingLaptopId}
           />
         ))}
       </ScrollView>

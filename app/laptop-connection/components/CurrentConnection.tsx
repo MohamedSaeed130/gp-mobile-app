@@ -6,19 +6,35 @@ import { SavedLaptop } from "../types";
 interface CurrentConnectionProps {
   isConnected: boolean;
   connectedLaptop?: SavedLaptop;
+  attemptingLaptop: SavedLaptop | null;
+  isLoading: boolean;
+  statusMessage: string;
 }
 
-const CurrentConnection = ({ isConnected, connectedLaptop }: CurrentConnectionProps) => {
+const CurrentConnection = ({ 
+  isConnected, 
+  connectedLaptop,
+  attemptingLaptop,
+  isLoading,
+  statusMessage,
+}: CurrentConnectionProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons
-          name={isConnected ? "computer" : "computer"}
+          name="computer"
           size={24}
-          color={isConnected ? "#34C759" : "#FF3B30"}
+          color={isConnected ? "#34C759" : isLoading ? "#007AFF" : "#FF3B30"}
         />
-        <Text style={[styles.status, { color: isConnected ? "#34C759" : "#FF3B30" }]}>
-          {isConnected ? "Connected" : "Not Connected"}
+        <Text 
+          style={[
+            styles.status, 
+            { 
+              color: isConnected ? "#34C759" : isLoading ? "#007AFF" : "#FF3B30" 
+            }
+          ]}
+        >
+          {statusMessage}
         </Text>
       </View>
       
@@ -27,6 +43,15 @@ const CurrentConnection = ({ isConnected, connectedLaptop }: CurrentConnectionPr
           <Text style={styles.name}>{connectedLaptop.name}</Text>
           <Text style={styles.info}>
             {connectedLaptop.ipAddress}:{connectedLaptop.port}
+          </Text>
+        </View>
+      )}
+
+      {!isConnected && isLoading && attemptingLaptop && (
+        <View style={styles.details}>
+          <Text style={styles.name}>Connecting to: {attemptingLaptop.name}</Text>
+          <Text style={styles.info}>
+            {attemptingLaptop.ipAddress}:{attemptingLaptop.port}
           </Text>
         </View>
       )}

@@ -8,6 +8,7 @@ interface SavedLaptopCardProps {
   onConnect: (laptop: SavedLaptop) => void;
   onDelete: (id: string) => void;
   isLoading?: boolean;
+  connectingLaptopId: string | null;
 }
 
 const SavedLaptopCard = ({
@@ -15,7 +16,11 @@ const SavedLaptopCard = ({
   onConnect,
   onDelete,
   isLoading,
+  connectingLaptopId,
 }: SavedLaptopCardProps) => {
+  const isThisLaptopConnecting = connectingLaptopId === laptop.id;
+  const isDisabled = isLoading; // Any connection attempt disables all buttons
+
   return (
     <View style={styles.card}>
       <View style={styles.mainContent}>
@@ -36,18 +41,25 @@ const SavedLaptopCard = ({
         <Pressable
           style={styles.deleteButton}
           onPress={() => onDelete(laptop.id)}
-          disabled={isLoading}
+          disabled={isDisabled}
         >
           <MaterialIcons name="delete-outline" size={20} color="#FF3B30" />
         </Pressable>
         <Pressable
-          style={[styles.connectButton, isLoading && styles.buttonDisabled]}
+          style={[styles.connectButton, isDisabled && styles.buttonDisabled]}
           onPress={() => onConnect(laptop)}
-          disabled={isLoading}
+          disabled={isDisabled}
         >
-          <MaterialIcons name="link" size={20} color="white" />
-          <Text style={styles.connectText}>
-            {isLoading ? "Connecting..." : "Connect"}
+          <MaterialIcons 
+            name="link" 
+            size={20} 
+            color={isDisabled ? "#ccc" : "white"} 
+          />
+          <Text style={[
+            styles.connectText,
+            isDisabled && styles.connectTextDisabled
+          ]}>
+            {isThisLaptopConnecting ? "Connecting..." : "Connect"}
           </Text>
         </Pressable>
       </View>
@@ -115,13 +127,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   buttonDisabled: {
-    backgroundColor: "#999",
+    backgroundColor: "#F2F2F7",
+    borderWidth: 1,
+    borderColor: "#E5E5EA",
   },
   connectText: {
     color: "white",
     fontSize: 14,
     fontWeight: "600",
     marginLeft: 4,
+  },
+  connectTextDisabled: {
+    color: "#999",
   },
 });
 

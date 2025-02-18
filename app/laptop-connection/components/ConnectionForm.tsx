@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface ConnectionFormProps {
   onConnect: (ipAddress: string, port: string, name: string) => void;
@@ -8,9 +8,11 @@ interface ConnectionFormProps {
 }
 
 const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
-  const [name, setName] = useState('');
-  const [ipAddress, setIpAddress] = useState('');
-  const [port, setPort] = useState('');
+  const [name, setName] = useState("");
+  const [ipAddress, setIpAddress] = useState("");
+  const [port, setPort] = useState("");
+
+  const isFormValid = ipAddress.trim() && port.trim() && name.trim();
 
   const handleConnect = () => {
     if (ipAddress && port && name) {
@@ -56,17 +58,25 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
       </View>
 
       <Pressable
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+        style={[
+          styles.button,
+          (!isFormValid || isLoading) && styles.buttonDisabled,
+        ]}
         onPress={handleConnect}
-        disabled={isLoading || !ipAddress || !port || !name}
+        disabled={isLoading || !isFormValid}
       >
-        <MaterialIcons 
-          name={isLoading ? 'hourglass-empty' : 'link'} 
-          size={24} 
-          color="white" 
+        <MaterialIcons
+          name={isLoading ? "hourglass-empty" : "link"}
+          size={24}
+          color={!isFormValid || isLoading ? "#ccc" : "white"}
         />
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Connecting...' : 'Connect'}
+        <Text
+          style={[
+            styles.buttonText,
+            (!isFormValid || isLoading) && styles.buttonTextDisabled,
+          ]}
+        >
+          {isLoading ? "Connecting..." : "Connect"}
         </Text>
       </Pressable>
     </View>
@@ -75,7 +85,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 15,
     borderRadius: 12,
     marginBottom: 20,
@@ -85,34 +95,39 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: "#E5E5EA",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#007AFF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#007AFF",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 15,
     borderRadius: 8,
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: '#999',
+    backgroundColor: "#F2F2F7",
+    borderWidth: 1,
+    borderColor: "#E5E5EA",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 8,
+  },
+  buttonTextDisabled: {
+    color: "#999",
   },
 });
 
-export default ConnectionForm; 
+export default ConnectionForm;
