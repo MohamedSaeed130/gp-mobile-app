@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import ConnectionStatus from "./components/ConnectionStatus";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConnectionForm from "./components/ConnectionForm";
 import { useWebSocket } from "./hooks/useWebSocket";
 import ScreenHeader from "../../components/ScreenHeader";
@@ -9,55 +9,97 @@ import SavedLaptopsSection from "./components/SavedLaptopsSection";
 import { SavedLaptop } from "./types";
 import CurrentConnection from "./components/CurrentConnection";
 
+const STORAGE_KEY = "saved_laptops";
+
 export default function LaptopConnectionScreen() {
   const { connect, disconnect, isConnected, isLoading, statusMessage } =
     useWebSocket();
 
-  // TODO: Move this to persistent storage
-  const [savedLaptops, setSavedLaptops] = useState<SavedLaptop[]>([
-    {
-      id: "1",
-      name: "Home Laptop",
-      ipAddress: "192.168.1.100",
-      port: "8080",
-      lastConnected: "2024-03-10 15:30",
-    },
-    // Add more saved laptops as needed
-  ]);
+  // Replace the hardcoded useState initialization
+  const [savedLaptops, setSavedLaptops] = useState<SavedLaptop[]>([]);
+
+  // Add useEffect to load saved laptops on component mount
+  useEffect(() => {
+    loadSavedLaptops();
+  }, []);
+
+  const loadSavedLaptops = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        setSavedLaptops(JSON.parse(savedData));
+      }
+    } catch (error) {
+      console.error("Error loading saved laptops:", error);
+    }
+  };
+
+  const saveLaptopsToStorage = async (laptops: SavedLaptop[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(laptops));
+    } catch (error) {
+      console.error("Error saving laptops:", error);
+    }
+  };
 
   // Add state for currently connected laptop
-  const [connectedLaptop, setConnectedLaptop] = useState<SavedLaptop | undefined>();
+  const [connectedLaptop, setConnectedLaptop] = useState<
+    SavedLaptop | undefined
+  >();
 
-  const handleConnect = (ipAddress: string, port: string, name: string) => {
+  // Add state to track which laptop is being connected
+  const [connectingLaptopId, setConnectingLaptopId] = useState<string | null>(
+    null
+  );
+
+  const [attemptingLaptop, setAttemptingLaptop] = useState<SavedLaptop | null>(
+    null
+  );
+
+  const handleConnect = async (
+    ipAddress: string,
+    port: string,
+    name: string
+  ) => {
+    const newLaptop: SavedLaptop = {
+      id: Date.now().toString(),
+      name,
+      ipAddress,
+      port,
+      lastConnected: new Date().toLocaleString(),
+    };
+    setAttemptingLaptop(newLaptop);
     connect(ipAddress, port);
     // If connection is successful, add to saved laptops and set as connected
     if (!isLoading) {
-      const newLaptop: SavedLaptop = {
-        id: Date.now().toString(),
-        name,
-        ipAddress,
-        port,
-        lastConnected: new Date().toLocaleString(),
-      };
-      setSavedLaptops((prev) => [newLaptop, ...prev]);
+      const updatedLaptops = [newLaptop, ...savedLaptops];
+      setSavedLaptops(updatedLaptops);
       setConnectedLaptop(newLaptop);
+      await saveLaptopsToStorage(updatedLaptops);
     }
   };
 
   const handleSavedLaptopConnect = (laptop: SavedLaptop) => {
+    setConnectingLaptopId(laptop.id);
+    setAttemptingLaptop(laptop);
     connect(laptop.ipAddress, laptop.port);
     if (!isLoading) {
       setConnectedLaptop(laptop);
+      setConnectingLaptopId(null);
     }
   };
 
-  const handleDeleteSavedLaptop = (id: string) => {
-    setSavedLaptops((prev) => prev.filter((laptop) => laptop.id !== id));
+  // Update handleDeleteSavedLaptop to persist changes
+  const handleDeleteSavedLaptop = async (id: string) => {
+    const updatedLaptops = savedLaptops.filter((laptop) => laptop.id !== id);
+    setSavedLaptops(updatedLaptops);
+    await saveLaptopsToStorage(updatedLaptops);
   };
 
   const handleDisconnect = () => {
     disconnect();
     setConnectedLaptop(undefined);
+    setAttemptingLaptop(null);
   };
 
   return (
@@ -70,9 +112,12 @@ export default function LaptopConnectionScreen() {
       />
 
       <ScrollView style={styles.content}>
-        <CurrentConnection 
-          isConnected={isConnected} 
+        <CurrentConnection
+          isConnected={isConnected}
           connectedLaptop={connectedLaptop}
+          attemptingLaptop={attemptingLaptop}
+          isLoading={isLoading}
+          statusMessage={statusMessage}
         />
 
         <ConnectionForm onConnect={handleConnect} isLoading={isLoading} />
@@ -82,13 +127,11 @@ export default function LaptopConnectionScreen() {
           onConnect={handleSavedLaptopConnect}
           onDelete={handleDeleteSavedLaptop}
           isLoading={isLoading}
+          connectingLaptopId={connectingLaptopId}
         />
 
         {isConnected && (
-          <Pressable 
-            style={styles.disconnectButton} 
-            onPress={handleDisconnect}
-          >
+          <Pressable style={styles.disconnectButton} onPress={handleDisconnect}>
             <MaterialIcons name="link-off" size={24} color="white" />
             <Text style={styles.disconnectText}>Disconnect</Text>
           </Pressable>
