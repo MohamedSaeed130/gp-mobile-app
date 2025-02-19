@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { SavedLaptop } from "../types";
+import { LaptopConnection } from "../../../types/LaptopConnection";
+
 
 interface SavedLaptopCardProps {
-  laptop: SavedLaptop;
-  onConnect: (laptop: SavedLaptop) => void;
+  laptop: LaptopConnection;
+  onConnect: (laptop: LaptopConnection) => void;
   onDelete: (id: string) => void;
   isLoading?: boolean;
   connectingLaptopId: string | null;

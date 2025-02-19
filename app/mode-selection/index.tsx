@@ -5,17 +5,15 @@ import { useRouter } from "expo-router";
 import ConnectionBanner from "./components/ConnectionBanner";
 import ModeCard from "./components/ModeCard";
 import ScreenHeader from "../../components/ScreenHeader";
-import LaptopConnectionStatus from "./components/LaptopConnectionStatus";
+import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
+import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 
 type ControlMode = "eye" | "face" | "hand" | null;
 
 export default function ModeSelectionScreen() {
   const router = useRouter();
   const [selectedMode, setSelectedMode] = useState<ControlMode>(null);
-
-  // TODO: Get these from global connection context
-  const isConnected = false;
-  const connectedLaptopName = "Home Laptop"; // This should come from context
+  const { isConnected } = useLaptopConnection();
 
   const modes: Array<{
     id: ControlMode;
@@ -59,10 +57,7 @@ export default function ModeSelectionScreen() {
       />
 
       <View style={styles.content}>
-        <LaptopConnectionStatus
-          isConnected={isConnected}
-          connectedLaptopName={connectedLaptopName}
-        />
+        <CurrentLaptopConnection />
 
         <ConnectionBanner isConnected={isConnected} />
 

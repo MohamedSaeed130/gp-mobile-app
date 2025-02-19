@@ -1,8 +1,8 @@
 import { Link } from "expo-router";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import ConnectionStatusSection from "../components/ConnectionStatusSection";
 import { useState } from "react";
+import CurrentLaptopConnection from "../components/CurrentLaptopConnection";
 
 interface MenuItemProps {
   href: string;
@@ -28,6 +28,9 @@ const MenuItem = ({ href, title, icon, description, color }: MenuItemProps) => (
 );
 
 export default function HomeScreen() {
+  // TODO: implement esp bluetooth connection functionality
+  const [espConnected, setEspConnected] = useState(false);
+
   const menuItems: MenuItemProps[] = [
     {
       href: "/laptop-connection",
@@ -66,10 +69,6 @@ export default function HomeScreen() {
     },
   ];
 
-  // TODO: Get these from global connection context
-  const [laptopConnected, setLaptopConnected] = useState(false);
-  const [espConnected, setEspConnected] = useState(false);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -77,10 +76,10 @@ export default function HomeScreen() {
         <Text style={styles.headerSubtitle}>Welcome back!</Text>
       </View>
 
-      <ConnectionStatusSection
-        laptopConnected={laptopConnected}
-        espConnected={espConnected}
-      />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Connection Status</Text>
+        <CurrentLaptopConnection />
+      </View>
 
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
@@ -180,5 +179,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     textAlign: "center",
+  },
+  section: {
+    padding: 20,
   },
 });

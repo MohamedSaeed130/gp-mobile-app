@@ -3,20 +3,18 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConnectionForm from "./components/ConnectionForm";
-import { useWebSocket } from "./hooks/useWebSocket";
+import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 import ScreenHeader from "../../components/ScreenHeader";
 import SavedLaptopsSection from "./components/SavedLaptopsSection";
-import { SavedLaptop } from "./types";
-import CurrentConnection from "./components/CurrentConnection";
+import { LaptopConnection } from "../../types/LaptopConnection";
+import CurrentConnection from "../../components/CurrentLaptopConnection";
 
 const STORAGE_KEY = "saved_laptops";
 
 export default function LaptopConnectionScreen() {
-  const { connect, disconnect, isConnected, isLoading, statusMessage } =
-    useWebSocket();
-
+  const { isConnected, isLoading, connect, disconnect } = useLaptopConnection();
   // Replace the hardcoded useState initialization
-  const [savedLaptops, setSavedLaptops] = useState<SavedLaptop[]>([]);
+  const [savedLaptops, setSavedLaptops] = useState<LaptopConnection[]>([]);
 
   // Add useEffect to load saved laptops on component mount
   useEffect(() => {
@@ -34,7 +32,7 @@ export default function LaptopConnectionScreen() {
     }
   };
 
-  const saveLaptopsToStorage = async (laptops: SavedLaptop[]) => {
+  const saveLaptopsToStorage = async (laptops: LaptopConnection[]) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(laptops));
     } catch (error) {
@@ -44,7 +42,7 @@ export default function LaptopConnectionScreen() {
 
   // Add state for currently connected laptop
   const [connectedLaptop, setConnectedLaptop] = useState<
-    SavedLaptop | undefined
+    LaptopConnection | undefined
   >();
 
   // Add state to track which laptop is being connected
@@ -52,24 +50,24 @@ export default function LaptopConnectionScreen() {
     null
   );
 
-  const [attemptingLaptop, setAttemptingLaptop] = useState<SavedLaptop | null>(
-    null
-  );
+  const [attemptingLaptop, setAttemptingLaptop] =
+    useState<LaptopConnection | null>(null);
 
   const handleConnect = async (
     ipAddress: string,
     port: string,
     name: string
   ) => {
-    const newLaptop: SavedLaptop = {
+    const newLaptop: LaptopConnection = {
       id: Date.now().toString(),
       name,
       ipAddress,
       port,
       lastConnected: new Date().toLocaleString(),
+      connectionStatus: "disconnected",
     };
     setAttemptingLaptop(newLaptop);
-    connect(ipAddress, port);
+    connect(ipAddress, port, name);
     // If connection is successful, add to saved laptops and set as connected
     if (!isLoading) {
       const updatedLaptops = [newLaptop, ...savedLaptops];
@@ -79,10 +77,10 @@ export default function LaptopConnectionScreen() {
     }
   };
 
-  const handleSavedLaptopConnect = (laptop: SavedLaptop) => {
+  const handleSavedLaptopConnect = (laptop: LaptopConnection) => {
     setConnectingLaptopId(laptop.id);
     setAttemptingLaptop(laptop);
-    connect(laptop.ipAddress, laptop.port);
+    connect(laptop.ipAddress, laptop.port, laptop.name);
     if (!isLoading) {
       setConnectedLaptop(laptop);
       setConnectingLaptopId(null);
@@ -112,13 +110,7 @@ export default function LaptopConnectionScreen() {
       />
 
       <ScrollView style={styles.content}>
-        <CurrentConnection
-          isConnected={isConnected}
-          connectedLaptop={connectedLaptop}
-          attemptingLaptop={attemptingLaptop}
-          isLoading={isLoading}
-          statusMessage={statusMessage}
-        />
+        <CurrentConnection />
 
         <ConnectionForm onConnect={handleConnect} isLoading={isLoading} />
 
@@ -137,13 +129,6 @@ export default function LaptopConnectionScreen() {
           </Pressable>
         )}
       </ScrollView>
-
-      <View style={styles.footer}>
-        <MaterialIcons name="info" size={20} color="#666" />
-        <Text style={styles.footerText}>
-          Make sure your laptop is running the required server application
-        </Text>
-      </View>
     </View>
   );
 }
@@ -169,24 +154,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
-    marginLeft: 8,
-  },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5EA",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  footerText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#666",
     marginLeft: 8,
   },
 });

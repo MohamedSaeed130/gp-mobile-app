@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { SavedLaptop } from "../types";
+import { LaptopConnection } from "../../../types/LaptopConnection";
 import SavedLaptopCard from "./SavedLaptopCard";
 
 interface SavedLaptopsSectionProps {
-  laptops: SavedLaptop[];
-  onConnect: (laptop: SavedLaptop) => void;
+  laptops: LaptopConnection[];
+  onConnect: (laptop: LaptopConnection) => void;
   onDelete: (id: string) => void;
   isLoading?: boolean;
   connectingLaptopId: string | null;
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SavedLaptopsSection; 
+export default SavedLaptopsSection;
