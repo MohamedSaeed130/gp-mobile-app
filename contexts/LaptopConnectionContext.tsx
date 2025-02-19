@@ -7,7 +7,7 @@ interface LaptopConnectionContextType {
   socket: WebSocket | null;
   connect: (ipAddress: string, port: string, name: string) => void;
   disconnect: () => void;
-  sendMessage: (message: any) => void;
+  sendMessage: (message: string) => void;
   laptopConnection: LaptopConnection | null;
   isConnected: boolean;
   isLoading: boolean;
@@ -95,9 +95,9 @@ export function LaptopConnectionProvider({
     }
   };
 
-  const sendMessage = (message: any) => {
+  const sendMessage = (message: string) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify(message));
+      socketRef.current.send(message);
     } else {
       setError("Cannot send message: WebSocket is not connected");
     }

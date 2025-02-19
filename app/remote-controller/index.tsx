@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
 import ActivityCard from "./components/ActivityCard";
 
 import Controls from "./components/Controls";
 import Road from "./components/controls-icons/Road";
 import Speedometer from "./components/controls-icons/Speedometer";
-import Chip from "./components/controls-icons/Chip";
-import ScreenHeader from '../../components/ScreenHeader';
+import ScreenHeader from "../../components/ScreenHeader";
+import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
 
 const activityCardSize = 50;
-const chipSize = 30;
 
 const RemoteController = () => {
-  const [connectionStatus, setConnectionStatus] = useState<
-    "connected" | "disconnected"
-  >("disconnected");
   const [currentMovement, setCurrentMovement] = useState<string>("");
   const [distance, setDistance] = useState(0);
   const [speed, setSpeed] = useState(0);
@@ -34,21 +30,6 @@ const RemoteController = () => {
     },
   ];
 
-  const renderConnectionStatus = () => (
-    <View style={styles.connectionStatus}>
-      <Chip width={chipSize} height={chipSize} />
-      <Text style={styles.deviceText}>ESP32: </Text>
-      <Text
-        style={[
-          styles.statusText,
-          { color: connectionStatus === "connected" ? "green" : "red" },
-        ]}
-      >
-        {connectionStatus === "connected" ? "Connected" : "Disconnected"}
-      </Text>
-    </View>
-  );
-
   const renderMovementStatus = () => (
     <View style={styles.movementStatus}>
       <Text style={styles.movementText}>{currentMovement || "Stationary"}</Text>
@@ -56,20 +37,20 @@ const RemoteController = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <ScreenHeader 
+    <ScrollView style={styles.container}>
+      <ScreenHeader
         title="Remote Control"
         subtitle="Control your wheelchair movement"
         icon="gamepad"
       />
-      {renderConnectionStatus()}
+      <CurrentLaptopConnection />
       {renderMovementStatus()}
       <FlatList
         columnWrapperStyle={[styles.center, { marginVertical: 10 }]}
         numColumns={2}
         data={activityCards}
         renderItem={({ item }) => (
-          <View style={{ paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: "5%" }}>
             <ActivityCard
               Icon={item.icon}
               value={item.value}
@@ -81,7 +62,7 @@ const RemoteController = () => {
       />
       <View style={styles.separator} />
       <Controls />
-    </View>
+    </ScrollView>
   );
 };
 

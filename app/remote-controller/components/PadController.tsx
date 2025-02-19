@@ -1,55 +1,36 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableHighlight,
-  GestureResponderEvent,
-} from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import DownArrow from "./arrows-icons/DownArrow";
 import UpArrow from "./arrows-icons/UpArrow";
 import RightArrow from "./arrows-icons/RightArrow";
 import LeftArrow from "./arrows-icons/LeftArrow";
-import Colors from "../../../constants/Colors";
+import { useMovementControl } from "../../../contexts/LaptopMovementControlContext";
 
-type onPressType = (event: GestureResponderEvent) => void;
+const PadController = ({ size }: { size: number }) => {
+  const { padMove } = useMovementControl();
 
-interface PadControllerProps {
-  size: number;
-  onUp: onPressType;
-  onDown: onPressType;
-  onRight: onPressType;
-  onLeft: onPressType;
-}
-
-const PadController = ({
-  size,
-  onUp,
-  onDown,
-  onRight,
-  onLeft,
-}: PadControllerProps) => {
   return (
     <View style={styles.pad}>
-      <TouchableHighlight onPress={onUp} underlayColor={Colors.buttonPressed}>
+      <Pressable onPressIn={padMove.moveUp} onPressOut={padMove.stopMoving}>
         <UpArrow width={size} height={size} />
-      </TouchableHighlight>
+      </Pressable>
       <View style={[styles.horizontalArrows, { gap: size }]}>
-        <TouchableHighlight
-          onPress={onLeft}
-          underlayColor={Colors.buttonPressed}
+        <Pressable
+          onPressIn={padMove.moveLeft}
+          onPressOut={padMove.stopSteering}
         >
           <LeftArrow width={size} height={size} />
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={onRight}
-          underlayColor={Colors.buttonPressed}
+        </Pressable>
+        <Pressable
+          onPressIn={padMove.moveRight}
+          onPressOut={padMove.stopSteering}
         >
           <RightArrow width={size} height={size} />
-        </TouchableHighlight>
+        </Pressable>
       </View>
-      <TouchableHighlight onPress={onDown} underlayColor={Colors.buttonPressed}>
+      <Pressable onPressIn={padMove.moveDown} onPressOut={padMove.stopMoving}>
         <DownArrow width={size} height={size} />
-      </TouchableHighlight>
+      </Pressable>
     </View>
   );
 };

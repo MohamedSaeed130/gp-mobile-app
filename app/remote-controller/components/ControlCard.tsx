@@ -11,21 +11,29 @@ export interface ControlCardProps {
   Icon: (props: any) => React.JSX.Element;
   label: string;
   size: number;
-  onPress?: (event: GestureResponderEvent) => void;
+  onPressIn?: (event: GestureResponderEvent) => void;
+  onPressOut?: (event: GestureResponderEvent) => void;
 }
 
-const ControlCard = ({ Icon, label, size, onPress }: ControlCardProps) => {
+const ControlCard = ({
+  Icon,
+  label,
+  size,
+  onPressIn,
+  onPressOut: onPressOff,
+}: ControlCardProps) => {
   const [pressed, setPressed] = useState(false);
   return (
     <Pressable
       style={[styles.container, styles.center, { width: size }]}
       onPressIn={(event) => {
-        if (!onPress) return;
+        if (!onPressIn) return;
         setPressed(true);
-        onPress(event);
+        onPressIn(event);
       }}
-      onPressOut={() => {
-        if (!onPress) return;
+      onPressOut={(event) => {
+        if (!onPressIn) return;
+        onPressOff && onPressOff(event);
         setPressed(false);
       }}
     >

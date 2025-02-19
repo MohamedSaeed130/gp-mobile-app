@@ -9,6 +9,8 @@ import Bulb from "./controls-icons/Bulb";
 import Joystick from "./controls-icons/Joystick";
 import Pad from "./controls-icons/Pad";
 import Colors from "../../../constants/Colors";
+import { useLaptopConnection } from "../../../contexts/LaptopConnectionContext";
+import { LaptopMovementControlProvider } from "../../../contexts/LaptopMovementControlContext";
 
 type controllerType = "Pad" | "Joystick";
 
@@ -19,24 +21,26 @@ const joystickStickSize = 80;
 const speedControllerSize = 40;
 
 const Controls = () => {
-  const mockFn = () => {};
+  const { sendMessage } = useLaptopConnection();
   const [controllerType, setControllerType] = useState<controllerType>("Pad");
 
   const controlCards: Omit<ControlCardProps, "size">[] = [
     {
       Icon: Bulb,
       label: "Light",
-      onPress: mockFn,
+      onPressIn: () => sendMessage("light_on"),
+      onPressOut: () => sendMessage("light_off"),
     },
     {
       Icon: Alarm,
       label: "Alarm",
-      onPress: mockFn,
+      onPressIn: () => sendMessage("alarm_on"),
+      onPressOut: () => sendMessage("alarm_off"),
     },
     {
       Icon: controllerType == "Pad" ? Pad : Joystick,
       label: controllerType,
-      onPress: () =>
+      onPressIn: () =>
         setControllerType(controllerType == "Pad" ? "Joystick" : "Pad"),
     },
     {
@@ -55,7 +59,8 @@ const Controls = () => {
           <ControlCard
             Icon={item.Icon}
             label={item.label}
-            onPress={item.onPress}
+            onPressIn={item.onPressIn}
+            onPressOut={item.onPressOut}
             size={controlCardSize}
           />
         )}
@@ -70,32 +75,27 @@ const Controls = () => {
           },
         ]}
       >
-        <View style={[styles.controllerContainer, styles.center]}>
-          <Text style={styles.controllerText}>Controller</Text>
-          {controllerType == "Pad" ? (
-            <PadController
-              size={padSize}
-              onUp={mockFn}
-              onDown={mockFn}
-              onLeft={mockFn}
-              onRight={mockFn}
-            />
-          ) : (
-            <JoystickController
-              onMove={(data: JoystickData) => mockFn}
-              size={joystickSize}
-              stickSize={joystickStickSize}
-              neutralColor="black"
-              activeColor={Colors.joystickPressed}
-            />
-          )}
-        </View>
+        <LaptopMovementControlProvider>
+          <View style={[styles.controllerContainer, styles.center]}>
+            <Text style={styles.controllerText}>Controller</Text>
+            {controllerType == "Pad" ? (
+              <PadController size={padSize} />
+            ) : (
+              <JoystickController
+                size={joystickSize}
+                stickSize={joystickStickSize}
+                neutralColor="black"
+                activeColor={Colors.joystickPressed}
+              />
+            )}
+          </View>
+        </LaptopMovementControlProvider>
         <View style={[styles.controllerContainer, { alignItems: "center" }]}>
           <Text style={styles.controllerText}>Speed</Text>
           <SpeedController
             size={speedControllerSize}
-            onDecrement={mockFn}
-            onIncrement={mockFn}
+            onDecrement={() => sendMessage("decrease_speed")}
+            onIncrement={() => sendMessage("increase_speed")}
           />
         </View>
       </View>

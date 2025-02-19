@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import CurrentLaptopConnection from "../components/CurrentLaptopConnection";
@@ -81,18 +81,12 @@ export default function HomeScreen() {
         <CurrentLaptopConnection />
       </View>
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         {menuItems.map((item) => (
           <MenuItem key={item.href} {...item} />
         ))}
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Make sure your device is connected before using remote control
-        </Text>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -164,21 +158,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginTop: 2,
-  },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5EA",
-  },
-  footerText: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
   },
   section: {
     padding: 20,

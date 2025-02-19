@@ -9,6 +9,7 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
+import { useMovementControl } from "../../../contexts/LaptopMovementControlContext";
 
 export interface JoystickData {
   x: number;
@@ -20,7 +21,6 @@ export interface JoystickData {
 interface JoystickProps {
   size?: number;
   stickSize?: number;
-  onMove: (data: JoystickData) => void;
   neutralColor?: string;
   activeColor?: string;
   style?: StyleProp<ViewStyle>;
@@ -29,7 +29,6 @@ interface JoystickProps {
 const JoystickController: React.FC<JoystickProps> = ({
   size = 150,
   stickSize = 60,
-  onMove,
   neutralColor = "#888",
   activeColor = "#555",
 }) => {
@@ -44,6 +43,8 @@ const JoystickController: React.FC<JoystickProps> = ({
   const calculateDistance = (dx: number, dy: number): number => {
     return Math.sqrt(dx * dx + dy * dy);
   };
+
+  const { joystickMove } = useMovementControl();
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -65,16 +66,14 @@ const JoystickController: React.FC<JoystickProps> = ({
 
       pan.setValue({ x: dx, y: dy });
 
-      if (onMove) {
-        const angle = calculateAngle(dx, dy);
-        const force = distance / maxDistance;
-        onMove({
-          x: dx / maxDistance,
-          y: dy / maxDistance,
-          angle,
-          force,
-        });
-      }
+      const angle = calculateAngle(dx, dy);
+      const force = distance / maxDistance;
+      joystickMove({
+        x: dx / maxDistance,
+        y: dy / maxDistance,
+        angle,
+        force,
+      });
     },
     onPanResponderRelease: () => {
       setStickColor(neutralColor);
@@ -83,10 +82,7 @@ const JoystickController: React.FC<JoystickProps> = ({
         friction: 5,
         useNativeDriver: false,
       }).start();
-
-      if (onMove) {
-        onMove({ x: 0, y: 0, angle: 0, force: 0 });
-      }
+      joystickMove({ x: 0, y: 0, angle: 0, force: 0 });
     },
   });
 
