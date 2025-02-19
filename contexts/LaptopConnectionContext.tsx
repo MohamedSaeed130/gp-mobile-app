@@ -29,6 +29,7 @@ export function LaptopConnectionProvider({
 
   const connect = (ipAddress: string, port: string, name: string) => {
     try {
+      setError(null);
       socketRef.current = new WebSocket(`ws://${ipAddress}:${port}`);
       // Update laptop info with connecting status
       setLaptopConnection({

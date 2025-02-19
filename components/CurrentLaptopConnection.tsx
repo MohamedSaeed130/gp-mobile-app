@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LaptopConnection } from "../types/LaptopConnection";
 import { useLaptopConnection } from "../contexts/LaptopConnectionContext";
 
 const CurrentLaptopConnection = () => {
@@ -44,9 +43,11 @@ const CurrentLaptopConnection = () => {
             {displayMessage}
           </Text>
         </View>
-        {isConnected && (
+        {(isConnected || isLoading) && (
           <Pressable style={styles.disconnectButton} onPress={disconnect}>
-            <Text style={styles.disconnectText}>Disconnect</Text>
+            <Text style={styles.disconnectText}>
+              {isLoading ? "Halt" : "Disconnect"}
+            </Text>
           </Pressable>
         )}
       </View>
