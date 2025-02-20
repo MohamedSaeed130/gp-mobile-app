@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
 import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ConnectionBanner from "./components/ConnectionBanner";
@@ -9,6 +10,7 @@ import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 import { ControlMode } from "../../types/ControlMode";
 import { useLaptopControl } from "../../contexts/LaptopControlContext";
+import Colors from "../../constants/Colors";
 
 export default function ModeSelectionScreen() {
   const router = useRouter();
@@ -16,35 +18,61 @@ export default function ModeSelectionScreen() {
   const { isConnected } = useLaptopConnection();
   const { selectMode } = useLaptopControl();
 
+  const buttonDisabled = !selectedMode || !isConnected;
+
   const modes: Array<{
     id: ControlMode;
     title: string;
     description: string;
-    icon: keyof typeof MaterialIcons.glyphMap;
+    icon: ReactElement;
   }> = [
     {
       id: "remote",
       title: "Remote Control",
       description: "Control using on-screen joystick and buttons",
-      icon: "gamepad" as const,
+      icon: (
+        <MaterialCommunityIcons
+          name="remote-tv"
+          size={28}
+          color={Colors.primary}
+        />
+      ),
     },
     {
       id: "eye",
       title: "Eye Direction",
       description: "Control using eye movement tracking",
-      icon: "visibility" as const,
+      icon: (
+        <MaterialCommunityIcons
+          name="eye-outline"
+          size={28}
+          color={Colors.primary}
+        />
+      ),
     },
     {
-      id: "face" as const,
+      id: "face",
       title: "Face Direction",
       description: "Control using face orientation",
-      icon: "face" as const,
+      icon: (
+        <MaterialCommunityIcons
+          name="face-recognition"
+          size={28}
+          color={Colors.primary}
+        />
+      ),
     },
     {
-      id: "hand" as const,
+      id: "hand",
       title: "Hand Gesture",
       description: "Control using hand gesture recognition",
-      icon: "back-hand" as const,
+      icon: (
+        <MaterialCommunityIcons
+          name="hand-front-right"
+          size={28}
+          color={Colors.primary}
+        />
+      ),
     },
   ];
 
@@ -53,12 +81,24 @@ export default function ModeSelectionScreen() {
     if (selectedMode === "remote") router.push("/remote-control");
   };
 
+  const getStyledIcon = (icon: ReactElement, isSelected: boolean) => {
+    return React.cloneElement(icon, {
+      color: isSelected ? Colors.background : Colors.primary
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScreenHeader
         title="Control Mode"
         subtitle="Select your preferred control method"
-        icon="settings-input-component"
+        icon={
+          <MaterialIcons
+            name="settings-input-component"
+            size={28}
+            color={Colors.textSecondary}
+          />
+        }
       />
 
       <ScrollView style={styles.content}>
@@ -73,7 +113,7 @@ export default function ModeSelectionScreen() {
             key={mode.id}
             title={mode.title}
             description={mode.description}
-            icon={mode.icon}
+            icon={getStyledIcon(mode.icon, selectedMode === mode.id)}
             isSelected={selectedMode === mode.id}
             isDisabled={!isConnected}
             onSelect={() => setSelectedMode(mode.id)}
@@ -83,9 +123,9 @@ export default function ModeSelectionScreen() {
 
       <View style={styles.footer}>
         <Pressable
-          style={[styles.startButton, !isConnected && styles.buttonDisabled]}
+          style={[styles.startButton, buttonDisabled && styles.buttonDisabled]}
           onPress={handleStartControl}
-          disabled={!isConnected}
+          disabled={buttonDisabled}
         >
           <MaterialIcons name="play-arrow" size={24} color="white" />
           <Text style={styles.buttonText}>Start Control</Text>
@@ -98,7 +138,7 @@ export default function ModeSelectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.surfaceLight,
   },
   content: {
     padding: 20,
@@ -107,7 +147,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#000",
+    color: Colors.textPrimary,
     marginBottom: 15,
   },
   footer: {
@@ -116,12 +156,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: `${Colors.background}E6`,
     borderTopWidth: 1,
-    borderTopColor: "#E5E5EA",
+    borderTopColor: Colors.divider,
   },
   startButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: Colors.primary,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -129,10 +169,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   buttonDisabled: {
-    backgroundColor: "#999",
+    backgroundColor: Colors.textLight,
   },
   buttonText: {
-    color: "white",
+    color: Colors.background,
     fontSize: 17,
     fontWeight: "600",
     marginLeft: 8,

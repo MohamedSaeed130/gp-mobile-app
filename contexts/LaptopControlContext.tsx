@@ -51,7 +51,7 @@ export function LaptopControlProvider({
     stopSteering: onSteeringOff,
   };
 
-  const joystickMovementThreshold = 0.3;
+  const joystickMovementThreshold = 0.4;
   let isSteering = false;
   let isMoving = false;
 

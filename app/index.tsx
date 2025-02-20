@@ -3,6 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import CurrentLaptopConnection from "../components/CurrentLaptopConnection";
+import Colors from "../constants/Colors";
 
 interface MenuItemProps {
   href: string;
@@ -16,13 +17,13 @@ const MenuItem = ({ href, title, icon, description, color }: MenuItemProps) => (
   <Link href={href} asChild>
     <Pressable style={styles.menuItem}>
       <View style={[styles.iconContainer, { backgroundColor: color }]}>
-        <MaterialIcons name={icon} size={32} color="white" />
+        <MaterialIcons name={icon} size={32} color={Colors.background} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.menuItemTitle}>{title}</Text>
+        <Text style={styles.menuItemDescription}>{description}</Text>
       </View>
-      <MaterialIcons name="chevron-right" size={24} color="#C7C7CC" />
+      <MaterialIcons name="chevron-right" size={24} color={Colors.textLight} />
     </Pressable>
   </Link>
 );
@@ -37,36 +38,36 @@ export default function HomeScreen() {
       title: "Laptop Connection",
       icon: "laptop",
       description: "Connect to your laptop for remote control",
-      color: "#5856D6",
+      color: Colors.primary,
     },
-    {
-      href: "/esp-connection",
-      title: "Connect Device",
-      icon: "bluetooth",
-      description: "Set up connection with your wheelchair",
-      color: "#007AFF",
-    },
+    // {
+    //   href: "/esp-connection",
+    //   title: "Connect Device",
+    //   icon: "bluetooth",
+    //   description: "Set up connection with your wheelchair",
+    //   color: "#007AFF",
+    // },
     {
       href: "/mode-selection",
       title: "Control Modes",
       icon: "settings-input-component",
       description: "Select your preferred control method",
-      color: "#FF9500",
+      color: Colors.secondary,
     },
-    {
-      href: "/remote-control",
-      title: "Remote Control",
-      icon: "gamepad",
-      description: "Control your wheelchair remotely",
-      color: "#FF3B30",
-    },
-    {
-      href: "/profile",
-      title: "Profile",
-      icon: "person",
-      description: "View and manage your profile",
-      color: "#34C759",
-    },
+    // {
+    //   href: "/remote-control",
+    //   title: "Remote Control",
+    //   icon: "gamepad",
+    //   description: "Control your wheelchair remotely",
+    //   color: "#FF3B30",
+    // },
+    // {
+    //   href: "/profile",
+    //   title: "Profile",
+    //   icon: "person",
+    //   description: "View and manage your profile",
+    //   color: "#34C759",
+    // },
   ];
 
   return (
@@ -94,23 +95,23 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.surfaceLight,
   },
   header: {
     padding: 20,
     paddingTop: 60,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E5EA",
+    borderBottomColor: Colors.divider,
   },
   headerTitle: {
     fontSize: 34,
     fontWeight: "bold",
-    color: "#000",
+    color: Colors.textPrimary,
   },
   headerSubtitle: {
     fontSize: 17,
-    color: "#666",
+    color: Colors.textSecondary,
     marginTop: 5,
   },
   content: {
@@ -119,17 +120,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#000",
+    color: Colors.textPrimary,
     marginBottom: 15,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
-    backgroundColor: "white",
+    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: Colors.textPrimary,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -149,14 +150,14 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  title: {
+  menuItemTitle: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#000",
+    color: Colors.textPrimary,
   },
-  description: {
+  menuItemDescription: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   section: {

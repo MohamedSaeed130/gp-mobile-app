@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LaptopConnection } from "../../../types/LaptopConnection";
 import SavedLaptopCard from "./SavedLaptopCard";
+import Colors from "../../../constants/Colors";
 
 interface SavedLaptopsSectionProps {
   laptops: LaptopConnection[];
@@ -44,16 +45,26 @@ const SavedLaptopsSection = ({
 const styles = StyleSheet.create({
   section: {
     marginTop: 20,
+    backgroundColor: Colors.componentBg,
+    borderRadius: 12,
+    padding: 15,
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   title: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#000",
-    marginBottom: 10,
-    paddingHorizontal: 15,
+    color: Colors.textPrimary,
+    marginBottom: 15,
   },
   list: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 0,
   },
 });
 

@@ -7,7 +7,8 @@ import Road from "./components/controls-icons/Road";
 import Speedometer from "./components/controls-icons/Speedometer";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
-import { LaptopControlProvider } from "../../contexts/LaptopControlContext";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Colors from "../../constants/Colors";
 
 const activityCardSize = 50;
 
@@ -42,7 +43,13 @@ const RemoteController = () => {
       <ScreenHeader
         title="Remote Control"
         subtitle="Control your wheelchair movement"
-        icon="gamepad"
+        icon={
+          <MaterialCommunityIcons
+            name="remote-tv"
+            size={28}
+            color={Colors.textSecondary}
+          />
+        }
       />
       <CurrentLaptopConnection />
       {renderMovementStatus()}
@@ -71,6 +78,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     gap: 10,
+    backgroundColor: Colors.surfaceLight,
   },
   header: {
     paddingVertical: 10,
@@ -80,7 +88,7 @@ const styles = StyleSheet.create({
     margin: "auto",
     width: "88%",
     height: 1,
-    backgroundColor: "grey",
+    backgroundColor: Colors.divider,
   },
   center: { justifyContent: "center", alignItems: "center" },
   connectionStatus: {
@@ -91,27 +99,31 @@ const styles = StyleSheet.create({
   deviceText: {
     fontSize: 20,
     fontWeight: "bold",
+    color: Colors.textPrimary,
     marginLeft: 8,
   },
   statusText: {
     fontWeight: "500",
+    color: Colors.textSecondary,
   },
   movementStatus: {
     marginVertical: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Colors.border,
     borderRadius: 8,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: Colors.surfaceLight,
   },
   movementText: {
     textAlign: "center",
     fontSize: 32,
     fontWeight: "bold",
+    color: Colors.textPrimary,
   },
   headerText: {
     fontSize: 18,
     fontWeight: "500",
+    color: Colors.textPrimary,
   },
 });
 

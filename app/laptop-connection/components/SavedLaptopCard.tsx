@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LaptopConnection } from "../../../types/LaptopConnection";
+import Colors from "../../../constants/Colors";
 
 
 interface SavedLaptopCardProps {
@@ -26,7 +27,7 @@ const SavedLaptopCard = ({
     <View style={styles.card}>
       <View style={styles.mainContent}>
         <View style={styles.iconContainer}>
-          <MaterialIcons name="computer" size={24} color="#007AFF" />
+          <MaterialIcons name="computer" size={24} color={Colors.primary} />
         </View>
         <View style={styles.details}>
           <Text style={styles.name}>{laptop.name}</Text>
@@ -44,7 +45,7 @@ const SavedLaptopCard = ({
           onPress={() => onDelete(laptop.id)}
           disabled={isDisabled}
         >
-          <MaterialIcons name="delete-outline" size={20} color="#FF3B30" />
+          <MaterialIcons name="delete-outline" size={20} color={Colors.error} />
         </Pressable>
         <Pressable
           style={[styles.connectButton, isDisabled && styles.buttonDisabled]}
@@ -54,7 +55,7 @@ const SavedLaptopCard = ({
           <MaterialIcons 
             name="link" 
             size={20} 
-            color={isDisabled ? "#ccc" : "white"} 
+            color={isDisabled ? Colors.textLight : Colors.background} 
           />
           <Text style={[
             styles.connectText,
@@ -70,10 +71,18 @@ const SavedLaptopCard = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
+    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     padding: 15,
     marginBottom: 10,
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   mainContent: {
     flexDirection: "row",
@@ -83,7 +92,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: "#F0F8FF",
+    backgroundColor: Colors.background,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,

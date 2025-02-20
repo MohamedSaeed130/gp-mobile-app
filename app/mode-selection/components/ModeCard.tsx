@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Colors from '../../../constants/Colors';
 
 export interface ModeCardProps {
   title: string;
   description: string;
-  icon: keyof typeof MaterialIcons.glyphMap;
+  icon: ReactElement;
   isSelected: boolean;
   isDisabled: boolean;
   onSelect: () => void;
@@ -30,11 +31,7 @@ const ModeCard = ({
       disabled={isDisabled}
     >
       <View style={[styles.iconContainer, isSelected && styles.selectedIcon]}>
-        <MaterialIcons 
-          name={icon} 
-          size={28} 
-          color={isSelected ? "white" : "#007AFF"} 
-        />
+        {icon}
       </View>
       <View style={styles.content}>
         <Text style={[styles.title, isDisabled && styles.disabledText]}>
@@ -45,7 +42,7 @@ const ModeCard = ({
         </Text>
       </View>
       {isSelected && (
-        <MaterialIcons name="check-circle" size={24} color="#007AFF" />
+        <MaterialCommunityIcons name="check-circle" size={24} color={Colors.primary} />
       )}
     </Pressable>
   );
@@ -56,15 +53,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E5E5EA',
+    borderColor: Colors.border,
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   selected: {
-    borderColor: '#007AFF',
-    backgroundColor: '#F0F8FF',
+    borderColor: Colors.primary,
+    backgroundColor: `${Colors.primary}10`, // 10% opacity version of primary color
   },
   disabled: {
     opacity: 0.5,
@@ -75,11 +80,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F8FF',
+    backgroundColor: Colors.surfaceLight,
     marginRight: 15,
   },
   selectedIcon: {
-    backgroundColor: '#007AFF',
+    backgroundColor: Colors.primary,
   },
   content: {
     flex: 1,
@@ -87,15 +92,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#000',
+    color: Colors.textPrimary,
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   disabledText: {
-    color: '#999',
+    color: Colors.textLight,
   },
 });
 

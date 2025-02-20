@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "../../../constants/Colors";
 
 interface ConnectionFormProps {
   onConnect: (ipAddress: string, port: string, name: string) => void;
@@ -68,7 +69,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
         <MaterialIcons
           name={isLoading ? "hourglass-empty" : "link"}
           size={24}
-          color={!isFormValid || isLoading ? "#ccc" : "white"}
+          color={!isFormValid || isLoading ? Colors.textLight : Colors.background}
         />
         <Text
           style={[
@@ -85,28 +86,37 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: Colors.componentBg,
     padding: 15,
     borderRadius: 12,
     marginBottom: 20,
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   inputGroup: {
     marginBottom: 15,
   },
   label: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.textSecondary,
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#E5E5EA",
+    borderColor: Colors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    color: Colors.textPrimary,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: Colors.primary,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -115,18 +125,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.surfaceLight,
     borderWidth: 1,
-    borderColor: "#E5E5EA",
+    borderColor: Colors.border,
   },
   buttonText: {
-    color: "white",
+    color: Colors.background,
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
   },
   buttonTextDisabled: {
-    color: "#999",
+    color: Colors.textLight,
   },
 });
 

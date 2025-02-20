@@ -9,7 +9,7 @@ const ESPConnectionScreen = () => {
       <ScreenHeader
         title="Device Connection"
         subtitle="Connect to your wheelchair's ESP32 module"
-        icon="bluetooth"
+        // icon="bluetooth"
         // iconColor={isConnected ? '#34C759' : '#FF3B30'}
       />
       <BluetoothScanScreen />

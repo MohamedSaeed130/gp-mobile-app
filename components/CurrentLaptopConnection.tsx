@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLaptopConnection } from "../contexts/LaptopConnectionContext";
+import Colors from "../constants/Colors";
 
 const CurrentLaptopConnection = () => {
   const {
@@ -11,6 +12,7 @@ const CurrentLaptopConnection = () => {
     error: statusMessage,
     disconnect,
   } = useLaptopConnection();
+  
   const displayMessage =
     statusMessage ||
     (isConnected
@@ -19,6 +21,12 @@ const CurrentLaptopConnection = () => {
       ? "Connecting"
       : "Not connected");
 
+  const getStatusColor = () => {
+    if (isConnected) return Colors.success;
+    if (isLoading) return Colors.info;
+    return Colors.error;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -26,18 +34,12 @@ const CurrentLaptopConnection = () => {
           <MaterialIcons
             name="computer"
             size={24}
-            color={isConnected ? "#34C759" : isLoading ? "#007AFF" : "#FF3B30"}
+            color={getStatusColor()}
           />
           <Text
             style={[
               styles.status,
-              {
-                color: isConnected
-                  ? "#34C759"
-                  : isLoading
-                  ? "#007AFF"
-                  : "#FF3B30",
-              },
+              { color: getStatusColor() },
             ]}
           >
             {displayMessage}
@@ -52,19 +54,10 @@ const CurrentLaptopConnection = () => {
         )}
       </View>
 
-      {isConnected && laptopConnection && (
-        <View style={styles.details}>
-          <Text style={styles.name}>{laptopConnection.name}</Text>
-          <Text style={styles.info}>
-            {laptopConnection.ipAddress}:{laptopConnection.port}
-          </Text>
-        </View>
-      )}
-
-      {!isConnected && isLoading && laptopConnection && (
+      {(isConnected || isLoading) && laptopConnection && (
         <View style={styles.details}>
           <Text style={styles.name}>
-            Connecting to: {laptopConnection.name}
+            {isLoading ? "Connecting to: " : ""}{laptopConnection.name}
           </Text>
           <Text style={styles.info}>
             {laptopConnection.ipAddress}:{laptopConnection.port}
@@ -77,10 +70,18 @@ const CurrentLaptopConnection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   header: {
     flexDirection: "row",
@@ -100,27 +101,27 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: "#E5E5EA",
+    borderTopColor: Colors.divider,
   },
   name: {
     fontSize: 15,
     fontWeight: "500",
-    color: "#000",
+    color: Colors.textPrimary,
   },
   info: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   disconnectButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: Colors.error,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
     marginLeft: "auto",
   },
   disconnectText: {
-    color: "white",
+    color: Colors.background,
     fontSize: 14,
     fontWeight: "600",
   },

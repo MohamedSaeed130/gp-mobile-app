@@ -1,25 +1,23 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "../constants/Colors";
 
 interface ScreenHeaderProps {
   title: string;
   subtitle?: string;
-  icon?: keyof typeof MaterialIcons.glyphMap;
-  iconColor?: string;
+  icon?: ReactElement;
 }
 
 const ScreenHeader = ({
   title,
   subtitle,
   icon,
-  iconColor = "#666",
 }: ScreenHeaderProps) => {
   return (
     <View style={styles.header}>
       {icon && (
         <View style={styles.iconContainer}>
-          <MaterialIcons name={icon} size={28} color={iconColor} />
+          {icon}
         </View>
       )}
       <View style={styles.titleContainer}>
@@ -34,9 +32,9 @@ const styles = StyleSheet.create({
   header: {
     padding: 20,
     paddingTop: 60,
-    backgroundColor: "white",
+    backgroundColor: Colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E5EA",
+    borderBottomColor: Colors.divider,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -47,7 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F0F8FF",
+    backgroundColor: Colors.surfaceLight,
   },
   titleContainer: {
     flex: 1,
@@ -55,11 +53,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: "bold",
-    color: "#000",
+    color: Colors.textPrimary,
   },
   subtitle: {
     fontSize: 17,
-    color: "#666",
+    color: Colors.textSecondary,
     marginTop: 5,
   },
 });

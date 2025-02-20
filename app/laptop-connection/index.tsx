@@ -8,6 +8,7 @@ import ScreenHeader from "../../components/ScreenHeader";
 import SavedLaptopsSection from "./components/SavedLaptopsSection";
 import { LaptopConnection } from "../../types/LaptopConnection";
 import CurrentConnection from "../../components/CurrentLaptopConnection";
+import Colors from "../../constants/Colors";
 
 const STORAGE_KEY = "saved_laptops";
 
@@ -105,8 +106,13 @@ export default function LaptopConnectionScreen() {
       <ScreenHeader
         title="Laptop Connection"
         subtitle="Connect to your laptop to enable remote control"
-        icon="computer"
-        iconColor={isConnected ? "#34C759" : "#FF3B30"}
+        icon={
+          <MaterialIcons 
+            name="computer" 
+            size={28} 
+            color={isConnected ? Colors.success : Colors.textSecondary} 
+          />
+        }
       />
 
       <ScrollView style={styles.content}>
@@ -136,13 +142,13 @@ export default function LaptopConnectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F2F2F7",
+    backgroundColor: Colors.surfaceLight,
   },
   content: {
     padding: 20,
   },
   disconnectButton: {
-    backgroundColor: "#FF3B30",
+    backgroundColor: Colors.error,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -151,7 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   disconnectText: {
-    color: "white",
+    color: Colors.background,
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,

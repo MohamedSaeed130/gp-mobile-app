@@ -1,19 +1,10 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  GestureResponderEvent,
-} from "react-native";
-import Colors from "../../../constants/Colors";
-
-type onPressType = (event: GestureResponderEvent) => void;
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 
 interface SpeedControllerProps {
   size: number;
-  onIncrement: onPressType;
-  onDecrement: onPressType;
+  onIncrement: () => void;
+  onDecrement: () => void;
 }
 
 const SpeedController = ({
@@ -21,27 +12,44 @@ const SpeedController = ({
   onIncrement,
   onDecrement,
 }: SpeedControllerProps) => {
-  const btnStyle = [styles.button, { width: size, heigth: size }];
+  const [pressedButton, setPressedButton] = useState<string | null>(null);
+
+  const handlePressIn = (button: string, action: () => void) => {
+    setPressedButton(button);
+    action();
+  };
+
+  const handlePressOut = () => {
+    setPressedButton(null);
+  };
+
+  const btnStyle = [styles.button, { width: size, height: size }];
   const txtStyle = [styles.text, { fontSize: size }];
 
   return (
     <View style={styles.container}>
-      <TouchableHighlight
-        onPress={onIncrement}
-        underlayColor={Colors.buttonPressed}
+      <Pressable
+        onPressIn={() => handlePressIn("increment", onIncrement)}
+        onPressOut={handlePressOut}
+        style={[
+          ...btnStyle,
+          styles.topButton,
+          { opacity: pressedButton === "increment" ? 0.5 : 1 },
+        ]}
       >
-        <View style={[...btnStyle, styles.topButton]}>
-          <Text style={txtStyle}>+</Text>
-        </View>
-      </TouchableHighlight>
-      <TouchableHighlight
-        onPress={onDecrement}
-        underlayColor={Colors.buttonPressed}
+        <Text style={txtStyle}>+</Text>
+      </Pressable>
+      <Pressable
+        onPressIn={() => handlePressIn("decrement", onDecrement)}
+        onPressOut={handlePressOut}
+        style={[
+          ...btnStyle,
+          styles.bottomButton,
+          { opacity: pressedButton === "decrement" ? 0.5 : 1 },
+        ]}
       >
-        <View style={[...btnStyle, styles.bottomButton]}>
-          <Text style={txtStyle}>-</Text>
-        </View>
-      </TouchableHighlight>
+        <Text style={txtStyle}>-</Text>
+      </Pressable>
     </View>
   );
 };
