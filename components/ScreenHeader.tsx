@@ -8,18 +8,10 @@ interface ScreenHeaderProps {
   icon?: ReactElement;
 }
 
-const ScreenHeader = ({
-  title,
-  subtitle,
-  icon,
-}: ScreenHeaderProps) => {
+const ScreenHeader = ({ title, subtitle, icon }: ScreenHeaderProps) => {
   return (
     <View style={styles.header}>
-      {icon && (
-        <View style={styles.iconContainer}>
-          {icon}
-        </View>
-      )}
+      {icon && <View style={styles.iconContainer}>{icon}</View>}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
@@ -31,7 +23,6 @@ const ScreenHeader = ({
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    paddingTop: 60,
     backgroundColor: Colors.background,
     borderBottomWidth: 1,
     borderBottomColor: Colors.divider,

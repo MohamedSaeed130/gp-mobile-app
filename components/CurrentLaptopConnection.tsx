@@ -12,7 +12,7 @@ const CurrentLaptopConnection = () => {
     error: statusMessage,
     disconnect,
   } = useLaptopConnection();
-  
+
   const displayMessage =
     statusMessage ||
     (isConnected
@@ -27,26 +27,62 @@ const CurrentLaptopConnection = () => {
     return Colors.error;
   };
 
+  const getContainerStyle = () => {
+    const statusColor = getStatusColor();
+    return [
+      styles.container,
+      {
+        borderColor: statusColor,
+        borderWidth: isConnected || isLoading ? 2 : 1,
+        transform: [{ scale: isConnected ? 1 : 0.98 }],
+        backgroundColor: `${statusColor}10`,
+      },
+    ];
+  };
+
+  const getIconStyle = () => {
+    return {
+      opacity: isLoading ? 0.7 : 1,
+      transform: [{ scale: isLoading ? 0.9 : 1 }],
+    };
+  };
+
+  const getIconContainerStyle = () => {
+    const statusColor = getStatusColor();
+    return [
+      styles.iconContainer,
+      getIconStyle(),
+      {
+        backgroundColor: `${statusColor}20`,
+      },
+    ];
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={getContainerStyle()}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <MaterialIcons
-            name="computer"
-            size={24}
-            color={getStatusColor()}
-          />
+          <View style={getIconContainerStyle()}>
+            <MaterialIcons name="computer" size={24} color={getStatusColor()} />
+          </View>
           <Text
             style={[
               styles.status,
               { color: getStatusColor() },
+              isLoading && styles.loadingText,
             ]}
           >
             {displayMessage}
           </Text>
         </View>
         {(isConnected || isLoading) && (
-          <Pressable style={styles.disconnectButton} onPress={disconnect}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.disconnectButton,
+              pressed && styles.disconnectButtonPressed,
+            ]}
+            onPress={disconnect}
+          >
             <Text style={styles.disconnectText}>
               {isLoading ? "Halt" : "Disconnect"}
             </Text>
@@ -57,7 +93,8 @@ const CurrentLaptopConnection = () => {
       {(isConnected || isLoading) && laptopConnection && (
         <View style={styles.details}>
           <Text style={styles.name}>
-            {isLoading ? "Connecting to: " : ""}{laptopConnection.name}
+            {isLoading ? "Connecting to: " : ""}
+            {laptopConnection.name}
           </Text>
           <Text style={styles.info}>
             {laptopConnection.ipAddress}:{laptopConnection.port}
@@ -70,7 +107,6 @@ const CurrentLaptopConnection = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
@@ -82,6 +118,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    transform: [{ scale: 1 }],
   },
   header: {
     flexDirection: "row",
@@ -92,10 +129,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: Colors.textPrimary,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
   status: {
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
+  },
+  loadingText: {
+    opacity: 0.8,
+    transform: [{ scale: 0.98 }],
   },
   details: {
     marginTop: 10,
@@ -119,6 +175,18 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
     marginLeft: "auto",
+    shadowColor: Colors.error,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  disconnectButtonPressed: {
+    opacity: 0.8,
+    transform: [{ scale: 0.95 }],
   },
   disconnectText: {
     color: Colors.background,

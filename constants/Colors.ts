@@ -10,8 +10,7 @@ const Colors = {
   background: "#FFFFFF",
   surfaceLight: "#F5F7FA",
   surfaceMed: "#E8EDF2",
-  // componentBg: "#EFF3F9",
-  componentBg: "#E5E4E2",
+  componentBg: "rgb(225 225 225)",
 
   textPrimary: "#2C3E50",
   textSecondary: "#5D6D7E",
@@ -24,6 +23,15 @@ const Colors = {
 
   border: "#CBD5E0",
   divider: "#E2E8F0",
+  ripple: "rgba(0, 0, 0, 0.1)",
+
+  // Header specific colors
+  headerBackground: "#3A3B3C",
+  headerText: "#FFFFFF",
+  headerSubtext: "#B3E5FC", // Light blue subtext
+  headerIconBg: "rgba(255, 255, 255, 0.1)", // Semi-transparent white
+  headerIconColor: "#FFFFFF", // White icon
+  headerBorder: "#736F6E", // Slightly lighter blue for border
 };
 
 export default Colors;
