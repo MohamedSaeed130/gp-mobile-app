@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ConnectionBanner from "./components/ConnectionBanner";
@@ -7,13 +7,14 @@ import ModeCard from "./components/ModeCard";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
-
-type ControlMode = "eye" | "face" | "hand" | null;
+import { ControlMode } from "../../types/ControlMode";
+import { useLaptopControl } from "../../contexts/LaptopControlContext";
 
 export default function ModeSelectionScreen() {
   const router = useRouter();
   const [selectedMode, setSelectedMode] = useState<ControlMode>(null);
   const { isConnected } = useLaptopConnection();
+  const { selectMode } = useLaptopControl();
 
   const modes: Array<{
     id: ControlMode;
@@ -21,6 +22,12 @@ export default function ModeSelectionScreen() {
     description: string;
     icon: keyof typeof MaterialIcons.glyphMap;
   }> = [
+    {
+      id: "remote",
+      title: "Remote Control",
+      description: "Control using on-screen joystick and buttons",
+      icon: "gamepad" as const,
+    },
     {
       id: "eye",
       title: "Eye Direction",
@@ -42,10 +49,8 @@ export default function ModeSelectionScreen() {
   ];
 
   const handleStartControl = () => {
-    if (selectedMode) {
-      // TODO: Set selected mode in global state
-      router.push("/remote-controller");
-    }
+    selectMode(selectedMode);
+    if (selectedMode === "remote") router.push("/remote-control");
   };
 
   return (
@@ -56,7 +61,7 @@ export default function ModeSelectionScreen() {
         icon="settings-input-component"
       />
 
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         <CurrentLaptopConnection />
 
         <ConnectionBanner isConnected={isConnected} />
@@ -74,20 +79,18 @@ export default function ModeSelectionScreen() {
             onSelect={() => setSelectedMode(mode.id)}
           />
         ))}
-      </View>
+      </ScrollView>
 
-      {selectedMode && (
-        <View style={styles.footer}>
-          <Pressable
-            style={[styles.startButton, !isConnected && styles.buttonDisabled]}
-            onPress={handleStartControl}
-            disabled={!isConnected}
-          >
-            <MaterialIcons name="play-arrow" size={24} color="white" />
-            <Text style={styles.buttonText}>Start Control</Text>
-          </Pressable>
-        </View>
-      )}
+      <View style={styles.footer}>
+        <Pressable
+          style={[styles.startButton, !isConnected && styles.buttonDisabled]}
+          onPress={handleStartControl}
+          disabled={!isConnected}
+        >
+          <MaterialIcons name="play-arrow" size={24} color="white" />
+          <Text style={styles.buttonText}>Start Control</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    marginBottom: 80,
   },
   sectionTitle: {
     fontSize: 22,

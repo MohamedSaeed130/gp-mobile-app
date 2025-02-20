@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useCallback } from "react";
-import { JoystickData } from "../app/remote-controller/components/JoystickController";
+import { JoystickData } from "../app/remote-control/components/JoystickController";
 import { useLaptopConnection } from "./LaptopConnectionContext";
+import { ControlMode } from "../types/ControlMode";
 
 // Define the context type
-interface LaptopMovementControlContextType {
+interface LaptopControlContextType {
   padMove: {
     moveUp: () => void;
     moveDown: () => void;
@@ -13,15 +14,19 @@ interface LaptopMovementControlContextType {
     stopSteering: () => void;
   };
   joystickMove: (data: JoystickData) => void;
+  light: { on: () => void; off: () => void };
+  alarm: { on: () => void; off: () => void };
+  speed: { increase: () => void; decrease: () => void };
+  selectMode: (mode: ControlMode) => void;
 }
 
 // Create the context
-const LaptopMovementControlContext = createContext<
-  LaptopMovementControlContextType | undefined
+const LaptopControlContext = createContext<
+  LaptopControlContextType | undefined
 >(undefined);
 
 // Create the provider component
-export function LaptopMovementControlProvider({
+export function LaptopControlProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -83,21 +88,40 @@ export function LaptopMovementControlProvider({
     [sendMessage, onMovingOff, onSteeringOff]
   );
 
+  const light = {
+    on: () => sendMessage("light_on"),
+    off: () => sendMessage("light_off"),
+  };
+  const alarm = {
+    on: () => sendMessage("alarm_on"),
+    off: () => sendMessage("alarm_off"),
+  };
+  const speed = {
+    increase: () => sendMessage("increase_speed"),
+    decrease: () => sendMessage("decrease_speed"),
+  };
+  const selectMode = (mode: ControlMode) =>
+    mode && sendMessage("select_mode:" + mode);
+
   const value = {
     padMove,
     joystickMove,
+    light,
+    alarm,
+    speed,
+    selectMode,
   };
 
   return (
-    <LaptopMovementControlContext.Provider value={value}>
+    <LaptopControlContext.Provider value={value}>
       {children}
-    </LaptopMovementControlContext.Provider>
+    </LaptopControlContext.Provider>
   );
 }
 
 // Create a custom hook to use the context
-export function useMovementControl() {
-  const context = useContext(LaptopMovementControlContext);
+export function useLaptopControl() {
+  const context = useContext(LaptopControlContext);
   if (context === undefined) {
     throw new Error(
       "useMovementControl must be used within a MovementControlProvider"

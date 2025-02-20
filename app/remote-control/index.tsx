@@ -7,6 +7,7 @@ import Road from "./components/controls-icons/Road";
 import Speedometer from "./components/controls-icons/Speedometer";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
+import { LaptopControlProvider } from "../../contexts/LaptopControlContext";
 
 const activityCardSize = 50;
 

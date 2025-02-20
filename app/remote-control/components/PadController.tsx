@@ -4,10 +4,10 @@ import DownArrow from "./arrows-icons/DownArrow";
 import UpArrow from "./arrows-icons/UpArrow";
 import RightArrow from "./arrows-icons/RightArrow";
 import LeftArrow from "./arrows-icons/LeftArrow";
-import { useMovementControl } from "../../../contexts/LaptopMovementControlContext";
+import { useLaptopControl } from "../../../contexts/LaptopControlContext";
 
 const PadController = ({ size }: { size: number }) => {
-  const { padMove } = useMovementControl();
+  const { padMove } = useLaptopControl();
 
   return (
     <View style={styles.pad}>

@@ -9,8 +9,7 @@ import Bulb from "./controls-icons/Bulb";
 import Joystick from "./controls-icons/Joystick";
 import Pad from "./controls-icons/Pad";
 import Colors from "../../../constants/Colors";
-import { useLaptopConnection } from "../../../contexts/LaptopConnectionContext";
-import { LaptopMovementControlProvider } from "../../../contexts/LaptopMovementControlContext";
+import { useLaptopControl } from "../../../contexts/LaptopControlContext";
 
 type controllerType = "Pad" | "Joystick";
 
@@ -21,21 +20,21 @@ const joystickStickSize = 80;
 const speedControllerSize = 40;
 
 const Controls = () => {
-  const { sendMessage } = useLaptopConnection();
   const [controllerType, setControllerType] = useState<controllerType>("Pad");
+  const { light, alarm, speed } = useLaptopControl();
 
   const controlCards: Omit<ControlCardProps, "size">[] = [
     {
       Icon: Bulb,
       label: "Light",
-      onPressIn: () => sendMessage("light_on"),
-      onPressOut: () => sendMessage("light_off"),
+      onPressIn: light.on,
+      onPressOut: light.off,
     },
     {
       Icon: Alarm,
       label: "Alarm",
-      onPressIn: () => sendMessage("alarm_on"),
-      onPressOut: () => sendMessage("alarm_off"),
+      onPressIn: alarm.on,
+      onPressOut: alarm.off,
     },
     {
       Icon: controllerType == "Pad" ? Pad : Joystick,
@@ -75,27 +74,25 @@ const Controls = () => {
           },
         ]}
       >
-        <LaptopMovementControlProvider>
-          <View style={[styles.controllerContainer, styles.center]}>
-            <Text style={styles.controllerText}>Controller</Text>
-            {controllerType == "Pad" ? (
-              <PadController size={padSize} />
-            ) : (
-              <JoystickController
-                size={joystickSize}
-                stickSize={joystickStickSize}
-                neutralColor="black"
-                activeColor={Colors.joystickPressed}
-              />
-            )}
-          </View>
-        </LaptopMovementControlProvider>
+        <View style={[styles.controllerContainer, styles.center]}>
+          <Text style={styles.controllerText}>Controller</Text>
+          {controllerType == "Pad" ? (
+            <PadController size={padSize} />
+          ) : (
+            <JoystickController
+              size={joystickSize}
+              stickSize={joystickStickSize}
+              neutralColor="black"
+              activeColor={Colors.joystickPressed}
+            />
+          )}
+        </View>
         <View style={[styles.controllerContainer, { alignItems: "center" }]}>
           <Text style={styles.controllerText}>Speed</Text>
           <SpeedController
             size={speedControllerSize}
-            onDecrement={() => sendMessage("decrease_speed")}
-            onIncrement={() => sendMessage("increase_speed")}
+            onDecrement={speed.decrease}
+            onIncrement={speed.increase}
           />
         </View>
       </View>

@@ -82,7 +82,7 @@ export function LaptopConnectionProvider({
         // Handle incoming messages if needed
       };
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to connect");
+      setError(err instanceof Error ? err.message : "\nFailed to connect");
       setLaptopConnection(null);
     }
   };
@@ -99,7 +99,7 @@ export function LaptopConnectionProvider({
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(message);
     } else {
-      setError("Cannot send message: WebSocket is not connected");
+      setError("Cannot send message:\nWebSocket is not connected");
     }
   };
 

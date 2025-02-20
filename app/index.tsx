@@ -29,7 +29,7 @@ const MenuItem = ({ href, title, icon, description, color }: MenuItemProps) => (
 
 export default function HomeScreen() {
   // TODO: implement esp bluetooth connection functionality
-  const [espConnected, setEspConnected] = useState(false);
+  // const [espConnected, setEspConnected] = useState(false);
 
   const menuItems: MenuItemProps[] = [
     {
@@ -54,7 +54,7 @@ export default function HomeScreen() {
       color: "#FF9500",
     },
     {
-      href: "/remote-controller",
+      href: "/remote-control",
       title: "Remote Control",
       icon: "gamepad",
       description: "Control your wheelchair remotely",

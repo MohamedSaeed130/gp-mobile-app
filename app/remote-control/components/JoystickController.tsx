@@ -9,7 +9,7 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { useMovementControl } from "../../../contexts/LaptopMovementControlContext";
+import { useLaptopControl } from "../../../contexts/LaptopControlContext";
 
 export interface JoystickData {
   x: number;
@@ -44,7 +44,7 @@ const JoystickController: React.FC<JoystickProps> = ({
     return Math.sqrt(dx * dx + dy * dy);
   };
 
-  const { joystickMove } = useMovementControl();
+  const { joystickMove } = useLaptopControl();
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
