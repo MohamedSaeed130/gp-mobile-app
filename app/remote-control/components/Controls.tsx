@@ -8,7 +8,6 @@ import Alarm from "./controls-icons/Alarm";
 import Bulb from "./controls-icons/Bulb";
 import Joystick from "./controls-icons/Joystick";
 import Pad from "./controls-icons/Pad";
-import Colors from "../../../constants/Colors";
 import { useLaptopControl } from "../../../contexts/LaptopControlContext";
 
 type controllerType = "Pad" | "Joystick";
@@ -83,7 +82,6 @@ const Controls = () => {
               size={joystickSize}
               stickSize={joystickStickSize}
               neutralColor="black"
-              activeColor={Colors.joystickPressed}
             />
           )}
         </View>

@@ -10,6 +10,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { useLaptopControl } from "../../../contexts/LaptopControlContext";
+import Colors from "../../../constants/Colors";
 
 export interface JoystickData {
   x: number;
@@ -29,8 +30,8 @@ interface JoystickProps {
 const JoystickController: React.FC<JoystickProps> = ({
   size = 150,
   stickSize = 60,
-  neutralColor = "#888",
-  activeColor = "#555",
+  neutralColor = Colors.componentBg,
+  activeColor = Colors.primary,
 }) => {
   const maxDistance = (size - stickSize) / 2;
   const pan = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
@@ -123,13 +124,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   background: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: Colors.surfaceMed,
     justifyContent: "center",
     alignItems: "center",
   },
   stick: {
     position: "absolute",
-    backgroundColor: "#888",
+    backgroundColor: Colors.componentBg,
   },
   shadow: {
     shadowColor: "#000",

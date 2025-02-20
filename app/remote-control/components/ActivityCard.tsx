@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import Colors from "../../../constants/Colors";
 
 interface ActivityCardProps {
   Icon: React.ReactElement;
@@ -34,16 +35,18 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(214 213 213)",
+    backgroundColor: Colors.componentBg,
   },
   value: {
     fontSize: 44,
     fontWeight: "bold",
     justifyContent: "center",
     alignItems: "center",
+    color: Colors.textPrimary,
   },
   unit: {
     fontSize: 16,
+    color: Colors.textSecondary,
   },
 });
 

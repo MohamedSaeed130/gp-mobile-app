@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
+import Colors from "../../../constants/Colors";
 
 interface SpeedControllerProps {
   size: number;
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: Colors.primary,
   },
   topButton: {
     borderTopRightRadius: 10,
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   text: {
-    color: "white",
+    color: Colors.background,
   },
 });
 

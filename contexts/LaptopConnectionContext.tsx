@@ -82,7 +82,7 @@ export function LaptopConnectionProvider({
         // Handle incoming messages if needed
       };
     } catch (err) {
-      setError(err instanceof Error ? err.message : "\nFailed to connect");
+      setError("Failed to construct WebSocket");
       setLaptopConnection(null);
     }
   };

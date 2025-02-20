@@ -6,6 +6,7 @@ import {
   StyleSheet,
   GestureResponderEvent,
 } from "react-native";
+import Colors from "../../../constants/Colors";
 
 export interface ControlCardProps {
   Icon: (props: any) => React.JSX.Element;
@@ -41,12 +42,20 @@ const ControlCard = ({
         style={[
           styles.iconContainer,
           styles.center,
-          { backgroundColor: pressed ? "black" : "white" },
+          { backgroundColor: pressed ? Colors.primary : Colors.componentBg },
         ]}
       >
-        <Icon width={size} height={size} fill={pressed ? "white" : "black"} />
+        <Icon
+          width={size}
+          height={size}
+          fill={pressed ? "white" : Colors.textPrimary}
+        />
       </View>
-      <Text style={[styles.label, styles.center]}>{label}</Text>
+      <Text
+        style={[styles.label, styles.center, { color: Colors.textSecondary }]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 };
