@@ -17,18 +17,22 @@ export default function AppHeader() {
           />
         </View>
         <View style={styles.userTextContainer}>
-          <Text style={styles.userName}>John Doe</Text>
+          <Text style={styles.userName}>Graduation Project 2025</Text>
           <Text style={styles.userRole}>User</Text>
         </View>
       </View>
 
       {!isHomeScreen && (
         <Link href="/" asChild>
-          <Pressable 
+          <Pressable
             style={styles.homeButton}
             android_ripple={{ color: Colors.headerIconBg }}
           >
-            <MaterialIcons name="home" size={24} color={Colors.headerIconColor} />
+            <MaterialIcons
+              name="home"
+              size={24}
+              color={Colors.headerIconColor}
+            />
           </Pressable>
         </Link>
       )}
