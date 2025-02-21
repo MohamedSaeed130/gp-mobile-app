@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConnectionForm from "./components/ConnectionForm";
@@ -107,10 +107,10 @@ export default function LaptopConnectionScreen() {
         title="Laptop Connection"
         subtitle="Connect to your laptop to enable remote control"
         icon={
-          <MaterialIcons 
-            name="computer" 
-            size={28} 
-            color={isConnected ? Colors.success : Colors.textSecondary} 
+          <MaterialIcons
+            name="computer"
+            size={28}
+            color={isConnected ? Colors.success : Colors.textSecondary}
           />
         }
       />
@@ -127,13 +127,6 @@ export default function LaptopConnectionScreen() {
           isLoading={isLoading}
           connectingLaptopId={connectingLaptopId}
         />
-
-        {isConnected && (
-          <Pressable style={styles.disconnectButton} onPress={handleDisconnect}>
-            <MaterialIcons name="link-off" size={24} color="white" />
-            <Text style={styles.disconnectText}>Disconnect</Text>
-          </Pressable>
-        )}
       </ScrollView>
     </View>
   );
