@@ -1,13 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import Colors from '../../constants/Colors';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "../../constants/Colors";
+import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 
-interface ConnectionBannerProps {
-  isConnected: boolean;
-}
+const ConnectionBanner = () => {
+  const { isConnected } = useLaptopConnection();
 
-const ConnectionBanner = ({ isConnected }: ConnectionBannerProps) => {
   if (isConnected) return null;
 
   return (
@@ -22,8 +21,8 @@ const ConnectionBanner = ({ isConnected }: ConnectionBannerProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: `${Colors.warning}10`, // 10% opacity version of warning color
     padding: 15,
     borderRadius: 12,
@@ -39,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConnectionBanner; 
+export default ConnectionBanner;

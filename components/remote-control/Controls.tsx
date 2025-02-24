@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FlatList, Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import PadController from "./PadController";
 import SpeedController from "./SpeedController";
 import JoystickController from "./JoystickController";
@@ -9,6 +9,7 @@ import Bulb from "./controls-icons/Bulb";
 import Joystick from "./controls-icons/Joystick";
 import Pad from "./controls-icons/Pad";
 import { useLaptopControl } from "../../contexts/LaptopControlContext";
+import Colors from "../../constants/Colors";
 
 type controllerType = "Pad" | "Joystick";
 
@@ -16,7 +17,7 @@ const controlCardSize = 30;
 const padSize = 60;
 const joystickSize = padSize * 3;
 const joystickStickSize = 80;
-const speedControllerSize = 40;
+const speedControllerSize = 50;
 
 const Controls = () => {
   const [controllerType, setControllerType] = useState<controllerType>("Pad");
@@ -49,20 +50,25 @@ const Controls = () => {
 
   return (
     <View>
-      <FlatList
-        columnWrapperStyle={{ justifyContent: "space-around" }}
-        numColumns={4}
-        data={controlCards}
-        renderItem={({ item }) => (
+      <View
+        style={[
+          {
+            flexDirection: "row",
+            justifyContent: "space-around",
+          },
+        ]}
+      >
+        {controlCards.map((item, i) => (
           <ControlCard
+            key={i}
             Icon={item.Icon}
             label={item.label}
             onPressIn={item.onPressIn}
             onPressOut={item.onPressOut}
             size={controlCardSize}
           />
-        )}
-      />
+        ))}
+      </View>
       <View
         style={[
           {
@@ -81,7 +87,8 @@ const Controls = () => {
             <JoystickController
               size={joystickSize}
               stickSize={joystickStickSize}
-              neutralColor="black"
+              neutralColor={Colors.primary}
+              activeColor="rgb(133 190 229)"
             />
           )}
         </View>

@@ -24,7 +24,7 @@ const SpeedController = ({
     setPressedButton(null);
   };
 
-  const btnStyle = [styles.button, { width: size, height: size }];
+  const btnStyle = [styles.button, { width: size }];
   const txtStyle = [styles.text, { fontSize: size }];
 
   return (
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     gap: 30,
   },
   button: {
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.primary,
   },

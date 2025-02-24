@@ -11,14 +11,10 @@ import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 import { ControlMode } from "../../types/ControlMode";
 import { useLaptopControl } from "../../contexts/LaptopControlContext";
 import Colors from "../../constants/Colors";
+import StartControl from "../../components/mode-selection/StartControl";
 
 export default function ModeSelectionScreen() {
-  const router = useRouter();
   const [selectedMode, setSelectedMode] = useState<ControlMode>(null);
-  const { isConnected } = useLaptopConnection();
-  const { selectMode } = useLaptopControl();
-
-  const buttonDisabled = !selectedMode || !isConnected;
 
   const modes: Array<{
     id: ControlMode;
@@ -76,11 +72,6 @@ export default function ModeSelectionScreen() {
     },
   ];
 
-  const handleStartControl = () => {
-    selectMode(selectedMode);
-    if (selectedMode === "remote") router.push("/remote-control");
-  };
-
   const getStyledIcon = (icon: ReactElement, isSelected: boolean) => {
     return React.cloneElement(icon, {
       color: isSelected ? Colors.background : Colors.primary,
@@ -104,33 +95,24 @@ export default function ModeSelectionScreen() {
       <ScrollView style={styles.content}>
         <CurrentLaptopConnection />
 
-        <ConnectionBanner isConnected={isConnected} />
+        <ConnectionBanner />
 
         <Text style={styles.sectionTitle}>Select Control Mode</Text>
 
-        {modes.map((mode) => (
-          <ModeCard
-            key={mode.id}
-            title={mode.title}
-            description={mode.description}
-            icon={getStyledIcon(mode.icon, selectedMode === mode.id)}
-            isSelected={selectedMode === mode.id}
-            isDisabled={!isConnected}
-            onSelect={() => setSelectedMode(mode.id)}
-          />
-        ))}
+        <View style={{ paddingBottom: 20 }}>
+          {modes.map((mode) => (
+            <ModeCard
+              key={mode.id}
+              title={mode.title}
+              description={mode.description}
+              icon={getStyledIcon(mode.icon, selectedMode === mode.id)}
+              isSelected={selectedMode === mode.id}
+              onSelect={() => setSelectedMode(mode.id)}
+            />
+          ))}
+        </View>
       </ScrollView>
-
-      <View style={styles.footer}>
-        <Pressable
-          style={[styles.startButton, buttonDisabled && styles.buttonDisabled]}
-          onPress={handleStartControl}
-          disabled={buttonDisabled}
-        >
-          <MaterialIcons name="play-arrow" size={24} color="white" />
-          <Text style={styles.buttonText}>Start Control</Text>
-        </Pressable>
-      </View>
+      <StartControl selectedMode={selectedMode} />
     </View>
   );
 }
@@ -142,7 +124,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    marginBottom: 80,
   },
   sectionTitle: {
     fontSize: 22,
@@ -151,14 +132,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 20,
     backgroundColor: `${Colors.background}E6`,
-    borderTopWidth: 1,
-    borderTopColor: Colors.divider,
   },
   startButton: {
     backgroundColor: Colors.primary,
@@ -173,7 +148,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.background,
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "600",
     marginLeft: 8,
   },

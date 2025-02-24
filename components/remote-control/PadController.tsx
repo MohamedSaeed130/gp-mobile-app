@@ -70,7 +70,6 @@ const PadController = ({ size }: { size: number }) => {
 
 const styles = StyleSheet.create({
   pad: {
-    backgroundColor: "white",
     alignItems: "center",
   },
   horizontalArrows: {

@@ -13,7 +13,7 @@ import Colors from "../../constants/Colors";
 const STORAGE_KEY = "saved_laptops";
 
 export default function LaptopConnectionScreen() {
-  const { isConnected, isLoading, connect, disconnect } = useLaptopConnection();
+  const { isConnected, isLoading, connect } = useLaptopConnection();
   // Replace the hardcoded useState initialization
   const [savedLaptops, setSavedLaptops] = useState<LaptopConnection[]>([]);
 
@@ -41,24 +41,28 @@ export default function LaptopConnectionScreen() {
     }
   };
 
-  // Add state for currently connected laptop
-  const [connectedLaptop, setConnectedLaptop] = useState<
-    LaptopConnection | undefined
-  >();
-
   // Add state to track which laptop is being connected
   const [connectingLaptopId, setConnectingLaptopId] = useState<string | null>(
     null
   );
-
-  const [attemptingLaptop, setAttemptingLaptop] =
-    useState<LaptopConnection | null>(null);
 
   const handleConnect = async (
     ipAddress: string,
     port: string,
     name: string
   ) => {
+    connect(ipAddress, port, name);
+
+    if (
+      savedLaptops.some(
+        (laptop) =>
+          laptop.name === name &&
+          laptop.ipAddress === ipAddress &&
+          laptop.port === port
+      )
+    )
+      return;
+
     const newLaptop: LaptopConnection = {
       id: Date.now().toString(),
       name,
@@ -67,23 +71,18 @@ export default function LaptopConnectionScreen() {
       lastConnected: new Date().toLocaleString(),
       connectionStatus: "disconnected",
     };
-    setAttemptingLaptop(newLaptop);
-    connect(ipAddress, port, name);
     // If connection is successful, add to saved laptops and set as connected
     if (!isLoading) {
       const updatedLaptops = [newLaptop, ...savedLaptops];
       setSavedLaptops(updatedLaptops);
-      setConnectedLaptop(newLaptop);
       await saveLaptopsToStorage(updatedLaptops);
     }
   };
 
   const handleSavedLaptopConnect = (laptop: LaptopConnection) => {
     setConnectingLaptopId(laptop.id);
-    setAttemptingLaptop(laptop);
     connect(laptop.ipAddress, laptop.port, laptop.name);
     if (!isLoading) {
-      setConnectedLaptop(laptop);
       setConnectingLaptopId(null);
     }
   };
@@ -93,12 +92,6 @@ export default function LaptopConnectionScreen() {
     const updatedLaptops = savedLaptops.filter((laptop) => laptop.id !== id);
     setSavedLaptops(updatedLaptops);
     await saveLaptopsToStorage(updatedLaptops);
-  };
-
-  const handleDisconnect = () => {
-    disconnect();
-    setConnectedLaptop(undefined);
-    setAttemptingLaptop(null);
   };
 
   return (
@@ -115,9 +108,11 @@ export default function LaptopConnectionScreen() {
         }
       />
 
-      <ScrollView style={styles.content}>
+      <View style={{ padding: 20 }}>
         <CurrentConnection />
+      </View>
 
+      <ScrollView style={styles.content}>
         <ConnectionForm onConnect={handleConnect} isLoading={isLoading} />
 
         <SavedLaptopsSection

@@ -42,7 +42,9 @@ const ControlCard = ({
         style={[
           styles.iconContainer,
           styles.center,
-          { backgroundColor: pressed ? Colors.primary : Colors.componentBg },
+          {
+            backgroundColor: pressed ? Colors.primary : Colors.componentBg,
+          },
         ]}
       >
         <Icon
@@ -51,17 +53,18 @@ const ControlCard = ({
           fill={pressed ? "white" : Colors.textPrimary}
         />
       </View>
-      <Text
-        style={[styles.label, styles.center, { color: Colors.textSecondary }]}
-      >
-        {label}
-      </Text>
+      <View style={{ flexWrap: "nowrap", flex: 1 }}>
+        <Text style={[styles.label, { color: Colors.textSecondary }]}>
+          {label}
+        </Text>
+      </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     gap: 5,
   },
   iconContainer: {

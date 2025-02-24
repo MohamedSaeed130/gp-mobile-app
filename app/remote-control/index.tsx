@@ -39,37 +39,38 @@ const RemoteController = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <ScreenHeader
-        title="Remote Control"
-        subtitle="Control your wheelchair movement"
-        icon={
-          <MaterialCommunityIcons
-            name="remote-tv"
-            size={28}
-            color={Colors.textSecondary}
-          />
-        }
-      />
-      <CurrentLaptopConnection />
-      {renderMovementStatus()}
-      <FlatList
-        columnWrapperStyle={[styles.center, { marginVertical: 10 }]}
-        numColumns={2}
-        data={activityCards}
-        renderItem={({ item }) => (
-          <View style={{ paddingHorizontal: "5%" }}>
-            <ActivityCard
-              Icon={item.icon}
-              value={item.value}
-              unit={item.unit}
+    <ScrollView>
+      <View style={styles.container}>
+        <ScreenHeader
+          title="Remote Control"
+          subtitle="Control your wheelchair movement"
+          icon={
+            <MaterialCommunityIcons
+              name="remote-tv"
+              size={28}
+              color={Colors.textSecondary}
             />
-            <Text>{item.label}</Text>
-          </View>
-        )}
-      />
-      <View style={styles.separator} />
-      <Controls />
+          }
+        />
+        <CurrentLaptopConnection />
+        {renderMovementStatus()}
+        <View
+          style={[styles.center, { flexDirection: "row", marginVertical: 5 }]}
+        >
+          {activityCards.map((item, i) => (
+            <View style={{ paddingHorizontal: "5%" }} key={i}>
+              <ActivityCard
+                Icon={item.icon}
+                value={item.value}
+                unit={item.unit}
+              />
+              <Text>{item.label}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.separator} />
+        <Controls />
+      </View>
     </ScrollView>
   );
 };

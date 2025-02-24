@@ -42,6 +42,7 @@ export function LaptopConnectionProvider({
       });
 
       socketRef.current.onopen = () => {
+        console.log("Connected to WebSocket");
         setError(null);
         // Update only the connection status
         setLaptopConnection((prev) =>
@@ -67,6 +68,7 @@ export function LaptopConnectionProvider({
       };
 
       socketRef.current.onerror = (event) => {
+        console.log("WebSocket error: ", event);
         setError("WebSocket error occurred");
         setLaptopConnection((prev) =>
           prev

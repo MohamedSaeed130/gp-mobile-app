@@ -40,7 +40,12 @@ export default function Layout() {
       <LaptopControlProvider>
         <View style={{ flex: 1 }}>
           <AppHeader />
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="laptop-connection/index" />
+            <Stack.Screen name="remote-control/index" />
+            <Stack.Screen name="esp-connection/index" />
+          </Stack>
         </View>
       </LaptopControlProvider>
     </LaptopConnectionProvider>
