@@ -9,8 +9,8 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { useLaptopControl } from "../../../contexts/LaptopControlContext";
-import Colors from "../../../constants/Colors";
+import { useLaptopControl } from "../../contexts/LaptopControlContext";
+import Colors from "../../constants/Colors";
 
 export interface JoystickData {
   x: number;

@@ -1,6 +1,6 @@
 import React from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import BluetoothScanScreen from "./components/BluetoothScanScreen";
+import BluetoothScanScreen from "../../components/esp-connection/BluetoothScanScreen";
 import ScreenHeader from "../../components/ScreenHeader";
 
 const ESPConnectionScreen = () => {

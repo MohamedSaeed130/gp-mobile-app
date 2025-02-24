@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Colors from '../../../constants/Colors';
+import Colors from '../../constants/Colors';
 
 export interface ModeCardProps {
   title: string;

@@ -3,8 +3,8 @@ import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import ConnectionBanner from "./components/ConnectionBanner";
-import ModeCard from "./components/ModeCard";
+import ConnectionBanner from "../../components/mode-selection//ConnectionBanner";
+import ModeCard from "../../components/mode-selection//ModeCard";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
@@ -83,7 +83,7 @@ export default function ModeSelectionScreen() {
 
   const getStyledIcon = (icon: ReactElement, isSelected: boolean) => {
     return React.cloneElement(icon, {
-      color: isSelected ? Colors.background : Colors.primary
+      color: isSelected ? Colors.background : Colors.primary,
     });
   };
 

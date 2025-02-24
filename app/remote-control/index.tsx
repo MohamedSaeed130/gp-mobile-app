@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
-import ActivityCard from "./components/ActivityCard";
+import ActivityCard from "../../components/remote-control/ActivityCard";
 
-import Controls from "./components/Controls";
-import Road from "./components/controls-icons/Road";
-import Speedometer from "./components/controls-icons/Speedometer";
+import Controls from "../../components/remote-control/Controls";
+import Road from "../../components/remote-control/controls-icons/Road";
+import Speedometer from "../../components/remote-control/controls-icons/Speedometer";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";

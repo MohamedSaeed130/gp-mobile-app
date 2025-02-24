@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { FlatList, Text, View, StyleSheet } from "react-native";
 import PadController from "./PadController";
 import SpeedController from "./SpeedController";
-import JoystickController, { JoystickData } from "./JoystickController";
+import JoystickController from "./JoystickController";
 import ControlCard, { ControlCardProps } from "./ControlCard";
 import Alarm from "./controls-icons/Alarm";
 import Bulb from "./controls-icons/Bulb";
 import Joystick from "./controls-icons/Joystick";
 import Pad from "./controls-icons/Pad";
-import { useLaptopControl } from "../../../contexts/LaptopControlContext";
+import { useLaptopControl } from "../../contexts/LaptopControlContext";
 
 type controllerType = "Pad" | "Joystick";
 

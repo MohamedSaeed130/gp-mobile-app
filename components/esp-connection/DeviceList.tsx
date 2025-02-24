@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import DeviceListItem from './DeviceListItem';
-import { BluetoothDevice } from '../types';
+import React from "react";
+import { View, FlatList, StyleSheet } from "react-native";
+import DeviceListItem from "./DeviceListItem";
+import { BluetoothDevice } from "../../types/ESPConnection";
 
 interface DeviceListProps {
   devices: BluetoothDevice[];
@@ -14,10 +14,7 @@ const DeviceList = ({ devices, onDevicePress }: DeviceListProps) => {
       data={devices}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <DeviceListItem
-          device={item}
-          onPress={() => onDevicePress(item)}
-        />
+        <DeviceListItem device={item} onPress={() => onDevicePress(item)} />
       )}
       style={styles.list}
       contentContainerStyle={styles.content}
@@ -34,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeviceList; 
+export default DeviceList;

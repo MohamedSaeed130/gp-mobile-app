@@ -3,4 +3,4 @@ export interface BluetoothDevice {
   name?: string;
   rssi?: number;
   // Add more properties as needed
-} 
+}

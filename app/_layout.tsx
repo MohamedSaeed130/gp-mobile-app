@@ -4,6 +4,7 @@ import { LaptopControlProvider } from "../contexts/LaptopControlContext";
 import AppHeader from "../components/AppHeader";
 import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
 
 // Configure splash screen options
 SplashScreen.setOptions({
@@ -12,6 +13,28 @@ SplashScreen.setOptions({
 });
 
 export default function Layout() {
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        // Simulate loading (e.g., fetch data, load fonts)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppReady(true);
+        await SplashScreen.hideAsync();
+      }
+    }
+    prepare();
+  }, []);
+
+  if (!appReady) {
+    return null; // Keep splash screen until ready
+  }
+
   return (
     <LaptopConnectionProvider>
       <LaptopControlProvider>

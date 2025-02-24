@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import DeviceList from "./DeviceList";
 import ScanHeader from "./ScanHeader";
-import { BluetoothDevice } from "../types";
+import { BluetoothDevice } from "../../types/ESPConnection";
 
 const BluetoothScanScreen = () => {
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);

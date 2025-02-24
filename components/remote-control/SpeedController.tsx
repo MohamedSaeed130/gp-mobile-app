@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import Colors from "../../../constants/Colors";
+import Colors from "../../constants/Colors";
 
 interface SpeedControllerProps {
   size: number;

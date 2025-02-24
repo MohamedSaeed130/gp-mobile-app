@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import Colors from "../../../constants/Colors";
+import Colors from "../../constants/Colors";
 
 interface ConnectionFormProps {
   onConnect: (ipAddress: string, port: string, name: string) => void;
@@ -69,7 +69,9 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
         <MaterialIcons
           name={isLoading ? "hourglass-empty" : "link"}
           size={24}
-          color={!isFormValid || isLoading ? Colors.textLight : Colors.background}
+          color={
+            !isFormValid || isLoading ? Colors.textLight : Colors.background
+          }
         />
         <Text
           style={[

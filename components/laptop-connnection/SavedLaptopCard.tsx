@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LaptopConnection } from "../../../types/LaptopConnection";
-import Colors from "../../../constants/Colors";
-
+import { LaptopConnection } from "../../types/LaptopConnection";
+import Colors from "../../constants/Colors";
 
 interface SavedLaptopCardProps {
   laptop: LaptopConnection;
@@ -52,15 +51,17 @@ const SavedLaptopCard = ({
           onPress={() => onConnect(laptop)}
           disabled={isDisabled}
         >
-          <MaterialIcons 
-            name="link" 
-            size={20} 
-            color={isDisabled ? Colors.textLight : Colors.background} 
+          <MaterialIcons
+            name="link"
+            size={20}
+            color={isDisabled ? Colors.textLight : Colors.background}
           />
-          <Text style={[
-            styles.connectText,
-            isDisabled && styles.connectTextDisabled
-          ]}>
+          <Text
+            style={[
+              styles.connectText,
+              isDisabled && styles.connectTextDisabled,
+            ]}
+          >
             {isThisLaptopConnecting ? "Connecting..." : "Connect"}
           </Text>
         </Pressable>
