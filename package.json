@@ -11,7 +11,6 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
     "expo": "~52.0.33",
-    "expo-dev-client": "~5.0.12",
     "expo-router": "^4.0.17",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
