@@ -1,15 +1,12 @@
 import React, { useState, ReactElement } from "react";
-import { ScrollView, View, Text, StyleSheet, Pressable } from "react-native";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import ConnectionBanner from "../../components/mode-selection//ConnectionBanner";
 import ModeCard from "../../components/mode-selection//ModeCard";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
-import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 import { ControlMode } from "../../types/ControlMode";
-import { useLaptopControl } from "../../contexts/LaptopControlContext";
 import Colors from "../../constants/Colors";
 import StartControl from "../../components/mode-selection/StartControl";
 
@@ -23,7 +20,7 @@ export default function ModeSelectionScreen() {
     icon: ReactElement;
   }> = [
     {
-      id: "remote",
+      id: "REMOTE",
       title: "Remote Control",
       description: "Control using on-screen joystick and buttons",
       icon: (
@@ -35,7 +32,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "eye",
+      id: "EYE",
       title: "Eye Direction",
       description: "Control using eye movement tracking",
       icon: (
@@ -47,7 +44,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "face",
+      id: "FACE",
       title: "Face Direction",
       description: "Control using face orientation",
       icon: (
@@ -59,7 +56,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "hand",
+      id: "HAND",
       title: "Hand Gesture",
       description: "Control using hand gesture recognition",
       icon: (
@@ -68,6 +65,14 @@ export default function ModeSelectionScreen() {
           size={28}
           color={Colors.primary}
         />
+      ),
+    },
+    {
+      id: "VOICE",
+      title: "Voice Commands",
+      description: "Control using voice commands",
+      icon: (
+        <MaterialIcons name="keyboard-voice" size={28} color={Colors.primary} />
       ),
     },
   ];

@@ -35,7 +35,7 @@ const PadController = ({ size }: { size: number }) => {
       <View style={[styles.horizontalArrows, { gap: size }]}>
         <Pressable
           onPressIn={() => handlePressIn("left", padMove.moveLeft)}
-          onPressOut={() => handlePressOut(padMove.stopSteering)}
+          onPressOut={() => handlePressOut(padMove.stopMoving)}
           style={({ pressed }) => [
             styles.button,
             { opacity: pressedButton === "left" ? 0.5 : 1 },
@@ -45,7 +45,7 @@ const PadController = ({ size }: { size: number }) => {
         </Pressable>
         <Pressable
           onPressIn={() => handlePressIn("right", padMove.moveRight)}
-          onPressOut={() => handlePressOut(padMove.stopSteering)}
+          onPressOut={() => handlePressOut(padMove.stopMoving)}
           style={({ pressed }) => [
             styles.button,
             { opacity: pressedButton === "right" ? 0.5 : 1 },

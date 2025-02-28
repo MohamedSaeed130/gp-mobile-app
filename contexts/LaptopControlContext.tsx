@@ -11,7 +11,6 @@ interface LaptopControlContextType {
     stopMoving: () => void;
     moveRight: () => void;
     moveLeft: () => void;
-    stopSteering: () => void;
   };
   joystickMove: (data: JoystickData) => void;
   light: { on: () => void; off: () => void };
@@ -33,22 +32,14 @@ export function LaptopControlProvider({
 }) {
   const { sendMessage } = useLaptopConnection();
 
-  const onSteeringOff = useCallback(
-    () => sendMessage("stop_steering"),
-    [sendMessage]
-  );
-  const onMovingOff = useCallback(
-    () => sendMessage("stop_moving"),
-    [sendMessage]
-  );
+  const onStopping = useCallback(() => sendMessage("STOP"), [sendMessage]);
 
   const padMove = {
-    moveUp: useCallback(() => sendMessage("up"), [sendMessage]),
-    moveDown: useCallback(() => sendMessage("down"), [sendMessage]),
-    stopMoving: onMovingOff,
-    moveRight: useCallback(() => sendMessage("right"), [sendMessage]),
-    moveLeft: useCallback(() => sendMessage("left"), [sendMessage]),
-    stopSteering: onSteeringOff,
+    moveUp: useCallback(() => sendMessage("MOVE"), [sendMessage]),
+    moveDown: useCallback(() => sendMessage("BACK"), [sendMessage]),
+    stopMoving: onStopping,
+    moveRight: useCallback(() => sendMessage("RIGHT"), [sendMessage]),
+    moveLeft: useCallback(() => sendMessage("LEFT"), [sendMessage]),
   };
 
   const joystickMovementThreshold = 0.4;
@@ -61,13 +52,13 @@ export function LaptopControlProvider({
         data.y > -joystickMovementThreshold &&
         data.y < joystickMovementThreshold
       ) {
-        if (isMoving) onMovingOff();
+        if (isMoving) onStopping();
         isMoving = false;
       } else if (data.y < -joystickMovementThreshold && !isMoving) {
-        sendMessage("up");
+        sendMessage("MOVE");
         isMoving = true;
       } else if (data.y > joystickMovementThreshold && !isMoving) {
-        sendMessage("down");
+        sendMessage("BACK");
         isMoving = true;
       }
 
@@ -75,33 +66,32 @@ export function LaptopControlProvider({
         data.x > -joystickMovementThreshold &&
         data.x < joystickMovementThreshold
       ) {
-        if (isSteering) onSteeringOff();
+        if (isSteering) onStopping();
         isSteering = false;
       } else if (data.x < -joystickMovementThreshold && !isSteering) {
-        sendMessage("left");
+        sendMessage("LEFT");
         isSteering = true;
       } else if (data.x > joystickMovementThreshold && !isSteering) {
-        sendMessage("right");
+        sendMessage("RIGHT");
         isSteering = true;
       }
     },
-    [sendMessage, onMovingOff, onSteeringOff]
+    [sendMessage, onStopping]
   );
 
   const light = {
-    on: () => sendMessage("light_on"),
-    off: () => sendMessage("light_off"),
+    on: () => sendMessage("LIGHT_ON"),
+    off: () => sendMessage("LIGHT_OFF"),
   };
   const alarm = {
-    on: () => sendMessage("alarm_on"),
-    off: () => sendMessage("alarm_off"),
+    on: () => sendMessage("ALARM_ON"),
+    off: () => sendMessage("ALARM_OFF"),
   };
   const speed = {
-    increase: () => sendMessage("increase_speed"),
-    decrease: () => sendMessage("decrease_speed"),
+    increase: () => sendMessage("INCREASE_SPEED"),
+    decrease: () => sendMessage("DECREASE_SPEED"),
   };
-  const selectMode = (mode: ControlMode) =>
-    mode && sendMessage("select_mode:" + mode);
+  const selectMode = (mode: ControlMode) => mode && sendMessage(mode);
 
   const value = {
     padMove,

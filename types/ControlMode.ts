@@ -1,1 +1,1 @@
-export type ControlMode = "remote" | "eye" | "face" | "hand" | null;
+export type ControlMode = "REMOTE" | "EYE" | "FACE" | "HAND" | "VOICE" | null;
