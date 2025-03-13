@@ -37,6 +37,20 @@ export default function HomeScreen() {
 
   const menuItems: MenuItemProps[] = [
     {
+      href: "/login",
+      title: "Login",
+      icon: "login",
+      description: "Sign in to your account",
+      color: Colors.info,
+    },
+    {
+      href: "/register",
+      title: "Register",
+      icon: "person-add",
+      description: "Create a new account",
+      color: Colors.success,
+    },
+    {
       href: "/laptop-connection",
       title: "Laptop Connection",
       icon: "laptop",
@@ -64,13 +78,27 @@ export default function HomeScreen() {
     //   description: "Control your wheelchair remotely",
     //   color: "#FF3B30",
     // },
-    // {
-    //   href: "/profile",
-    //   title: "Profile",
-    //   icon: "person",
-    //   description: "View and manage your profile",
-    //   color: "#34C759",
-    // },
+    {
+      href: "/profile",
+      title: "Profile",
+      icon: "person",
+      description: "View and manage your profile",
+      color: "#34C759",
+    },
+    {
+      href: "/relations",
+      title: "Relations",
+      icon: "people",
+      description: "Manage your connections and friends",
+      color: Colors.info,
+    },
+    {
+      href: "/ward-report",
+      title: "Ward Report",
+      icon: "assessment",
+      description: "View medical status and activity reports",
+      color: Colors.info,
+    },
   ];
 
   return (

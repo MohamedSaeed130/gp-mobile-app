@@ -1,10 +1,11 @@
 import { Stack } from "expo-router";
 import { LaptopConnectionProvider } from "../contexts/LaptopConnectionContext";
 import { LaptopControlProvider } from "../contexts/LaptopControlContext";
-import AppHeader from "../components/AppHeader";
+import AppHeader from "../components/app-header/AppHeader";
 import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
+import { usePathname } from "expo-router";
 
 // Configure splash screen options
 SplashScreen.setOptions({
@@ -14,6 +15,9 @@ SplashScreen.setOptions({
 
 export default function Layout() {
   const [appReady, setAppReady] = useState(false);
+  const pathname = usePathname();
+  const showHeader =
+    !pathname.includes("/login") && !pathname.includes("/register");
 
   useEffect(() => {
     async function prepare() {
@@ -39,12 +43,17 @@ export default function Layout() {
     <LaptopConnectionProvider>
       <LaptopControlProvider>
         <View style={{ flex: 1 }}>
-          <AppHeader />
+          {showHeader && <AppHeader />}
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="laptop-connection/index" />
             <Stack.Screen name="remote-control/index" />
             <Stack.Screen name="esp-connection/index" />
+            <Stack.Screen name="login/index" />
+            <Stack.Screen name="register/index" />
+            <Stack.Screen name="profile/index" />
+            <Stack.Screen name="relations/index" />
+            <Stack.Screen name="ward-report/index" />
           </Stack>
         </View>
       </LaptopControlProvider>

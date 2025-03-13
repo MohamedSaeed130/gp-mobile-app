@@ -88,7 +88,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.componentBg,
+    backgroundColor: Colors.background,
     padding: 15,
     borderRadius: 12,
     marginBottom: 20,
