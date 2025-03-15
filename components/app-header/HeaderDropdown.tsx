@@ -21,7 +21,7 @@ export const HeaderDropdown = ({
       <Pressable style={styles.overlay} onPress={onClose} />
       <View style={styles.container}>
         <View style={styles.dropdown}>
-          <Link href="/profile-caregiver" asChild>
+          <Link href="/profile" asChild>
             <Pressable
               style={styles.menuItem}
               android_ripple={{ color: Colors.ripple }}
