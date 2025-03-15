@@ -98,7 +98,6 @@ export default function LaptopConnectionScreen() {
     <View style={styles.container}>
       <ScreenHeader
         title="Laptop Connection"
-        subtitle="Connect to your laptop to enable remote control"
         icon={
           <MaterialIcons
             name="computer"

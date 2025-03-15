@@ -149,7 +149,6 @@ export default function Relations() {
     <View style={styles.container}>
       <ScreenHeader
         title="Relations"
-        subtitle="Manage your connections"
         icon={<FontAwesome name="users" size={24} color={Colors.primary} />}
       />
       <RelationsSearch value={searchQuery} onSearch={setSearchQuery} />

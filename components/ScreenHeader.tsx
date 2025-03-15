@@ -4,17 +4,15 @@ import Colors from "../constants/Colors";
 
 interface ScreenHeaderProps {
   title: string;
-  subtitle?: string;
   icon?: ReactElement;
 }
 
-const ScreenHeader = ({ title, subtitle, icon }: ScreenHeaderProps) => {
+const ScreenHeader = ({ title, icon }: ScreenHeaderProps) => {
   return (
     <View style={styles.header}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
-        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
     </View>
   );
