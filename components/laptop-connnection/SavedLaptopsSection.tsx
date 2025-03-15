@@ -45,7 +45,6 @@ const SavedLaptopsSection = ({
 const styles = StyleSheet.create({
   section: {
     marginTop: 20,
-    backgroundColor: Colors.componentBg,
     borderRadius: 12,
     padding: 15,
     shadowColor: Colors.textPrimary,

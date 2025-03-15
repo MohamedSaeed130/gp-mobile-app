@@ -30,6 +30,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
           value={name}
           onChangeText={setName}
           placeholder="Enter a name for this connection"
+          placeholderTextColor={Colors.textLight}
           editable={!isLoading}
         />
       </View>
@@ -41,6 +42,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
           value={ipAddress}
           onChangeText={setIpAddress}
           placeholder="Enter IP address"
+          placeholderTextColor={Colors.textLight}
           keyboardType="numeric"
           editable={!isLoading}
         />
@@ -53,6 +55,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
           value={port}
           onChangeText={setPort}
           placeholder="Enter port number"
+          placeholderTextColor={Colors.textLight}
           keyboardType="numeric"
           editable={!isLoading}
         />
@@ -88,7 +91,6 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
     padding: 15,
     borderRadius: 12,
     marginBottom: 20,
@@ -110,10 +112,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
+    backgroundColor: Colors.surfaceLight,
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: 8,
     padding: 12,
+    marginBottom: 16,
     fontSize: 16,
     color: Colors.textPrimary,
   },
