@@ -20,7 +20,7 @@ export default function ModeSelectionScreen() {
     icon: ReactElement;
   }> = [
     {
-      id: "REMOTE",
+      id: "remote",
       title: "Remote Control",
       description: "Control using on-screen joystick and buttons",
       icon: (
@@ -32,7 +32,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "EYE",
+      id: "eye",
       title: "Eye Direction",
       description: "Control using eye movement tracking",
       icon: (
@@ -44,7 +44,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "FACE",
+      id: "face",
       title: "Face Direction",
       description: "Control using face orientation",
       icon: (
@@ -56,7 +56,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "HAND",
+      id: "hand",
       title: "Hand Gesture",
       description: "Control using hand gesture recognition",
       icon: (
@@ -68,7 +68,7 @@ export default function ModeSelectionScreen() {
       ),
     },
     {
-      id: "VOICE",
+      id: "voice",
       title: "Voice Commands",
       description: "Control using voice commands",
       icon: (
@@ -87,7 +87,6 @@ export default function ModeSelectionScreen() {
     <View style={styles.container}>
       <ScreenHeader
         title="Control Mode"
-        subtitle="Select your preferred control method"
         icon={
           <MaterialIcons
             name="settings-input-component"

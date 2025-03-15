@@ -21,8 +21,8 @@ export default function StartControl({
 
   const handleStartControl = () => {
     setStartPressed(true);
-    selectMode(selectedMode);
-    if (selectedMode === "REMOTE") router.push("/remote-control");
+    if (selectedMode === "remote") router.push("/remote-control");
+    else selectMode(selectedMode);
   };
 
   return (

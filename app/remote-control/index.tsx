@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ActivityCard from "../../components/remote-control/ActivityCard";
 
 import Controls from "../../components/remote-control/Controls";
@@ -43,7 +43,6 @@ const RemoteController = () => {
       <View style={styles.container}>
         <ScreenHeader
           title="Remote Control"
-          subtitle="Control your wheelchair movement"
           icon={
             <MaterialCommunityIcons
               name="remote-tv"

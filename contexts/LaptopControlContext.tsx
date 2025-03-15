@@ -32,14 +32,17 @@ export function LaptopControlProvider({
 }) {
   const { sendMessage } = useLaptopConnection();
 
-  const onStopping = useCallback(() => sendMessage("STOP"), [sendMessage]);
+  const onStopping = useCallback(
+    () => sendMessage("remote:stop"),
+    [sendMessage]
+  );
 
   const padMove = {
-    moveUp: useCallback(() => sendMessage("MOVE"), [sendMessage]),
-    moveDown: useCallback(() => sendMessage("BACK"), [sendMessage]),
+    moveUp: useCallback(() => sendMessage("remote:forward"), [sendMessage]),
+    moveDown: useCallback(() => sendMessage("remote:backward"), [sendMessage]),
     stopMoving: onStopping,
-    moveRight: useCallback(() => sendMessage("RIGHT"), [sendMessage]),
-    moveLeft: useCallback(() => sendMessage("LEFT"), [sendMessage]),
+    moveRight: useCallback(() => sendMessage("remote:right"), [sendMessage]),
+    moveLeft: useCallback(() => sendMessage("remote:left"), [sendMessage]),
   };
 
   const joystickMovementThreshold = 0.4;
@@ -55,10 +58,10 @@ export function LaptopControlProvider({
         if (isMoving) onStopping();
         isMoving = false;
       } else if (data.y < -joystickMovementThreshold && !isMoving) {
-        sendMessage("MOVE");
+        padMove.moveUp();
         isMoving = true;
       } else if (data.y > joystickMovementThreshold && !isMoving) {
-        sendMessage("BACK");
+        padMove.moveDown();
         isMoving = true;
       }
 
@@ -69,10 +72,10 @@ export function LaptopControlProvider({
         if (isSteering) onStopping();
         isSteering = false;
       } else if (data.x < -joystickMovementThreshold && !isSteering) {
-        sendMessage("LEFT");
+        padMove.moveLeft();
         isSteering = true;
       } else if (data.x > joystickMovementThreshold && !isSteering) {
-        sendMessage("RIGHT");
+        padMove.moveRight();
         isSteering = true;
       }
     },
@@ -80,18 +83,18 @@ export function LaptopControlProvider({
   );
 
   const light = {
-    on: () => sendMessage("LIGHT_ON"),
-    off: () => sendMessage("LIGHT_OFF"),
+    on: () => sendMessage("light_on"),
+    off: () => sendMessage("light_off"),
   };
   const alarm = {
-    on: () => sendMessage("ALARM_ON"),
-    off: () => sendMessage("ALARM_OFF"),
+    on: () => sendMessage("alarm_on"),
+    off: () => sendMessage("alarm_off"),
   };
   const speed = {
-    increase: () => sendMessage("INCREASE_SPEED"),
-    decrease: () => sendMessage("DECREASE_SPEED"),
+    increase: () => sendMessage("increase_speed"),
+    decrease: () => sendMessage("decrease_speed"),
   };
-  const selectMode = (mode: ControlMode) => mode && sendMessage(mode);
+  const selectMode = (mode: ControlMode) => mode && sendMessage("select_mode:"+mode);
 
   const value = {
     padMove,
