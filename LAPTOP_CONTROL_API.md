@@ -6,12 +6,12 @@ This API describes the string commands sent from the application to the laptop, 
 
 ## Control Buttons
 
-- "light_on": Turns on the ESP32's LED lights
-- "light_off": Turns off the ESP32's LED lights
-- "alarm_on": Activates the ESP32's buzzer alarm
-- "alarm_off": Deactivates the ESP32's buzzer alarm
-- "increase_speed": Increases the movement speed by one level
-- "decrease_speed": Decreases the movement speed by one level
+- "remote:light_on": Turns on the ESP32's LED lights
+- "remote:light_off": Turns off the ESP32's LED lights
+- "remote:alarm_on": Activates the ESP32's buzzer alarm
+- "remote:alarm_off": Deactivates the ESP32's buzzer alarm
+- "remote:increase_speed": Increases the movement speed by one level
+- "remote:decrease_speed": Decreases the movement speed by one level
 
 ## Movement Remote Control
 

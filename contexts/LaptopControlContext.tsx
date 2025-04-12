@@ -83,18 +83,19 @@ export function LaptopControlProvider({
   );
 
   const light = {
-    on: () => sendMessage("light_on"),
-    off: () => sendMessage("light_off"),
+    on: () => sendMessage("remote:light_on"),
+    off: () => sendMessage("remote:light_off"),
   };
   const alarm = {
-    on: () => sendMessage("alarm_on"),
-    off: () => sendMessage("alarm_off"),
+    on: () => sendMessage("remote:alarm_on"),
+    off: () => sendMessage("remote:alarm_off"),
   };
   const speed = {
-    increase: () => sendMessage("increase_speed"),
-    decrease: () => sendMessage("decrease_speed"),
+    increase: () => sendMessage("remote:increase_speed"),
+    decrease: () => sendMessage("remote:decrease_speed"),
   };
-  const selectMode = (mode: ControlMode) => mode && sendMessage("select_mode:"+mode);
+  const selectMode = (mode: ControlMode) =>
+    mode && sendMessage("select_mode:" + mode);
 
   const value = {
     padMove,
