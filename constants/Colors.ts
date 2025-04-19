@@ -8,9 +8,10 @@ const Colors = {
   accent: "#FF5722",
 
   background: "#FFFFFF",
-  surfaceLight: "#F5F7FA",
+  // surfaceLight: "#F5F7FA",
+  surfaceLight: "#FFFFFF",
   surfaceMed: "#E8EDF2",
-  componentBg: "rgb(225 225 225)",
+  componentBg: "EEEEEE",
 
   textPrimary: "#2C3E50",
   textSecondary: "#5D6D7E",

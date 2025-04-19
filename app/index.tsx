@@ -65,6 +65,13 @@ export default function HomeScreen() {
       description: "View medical status and activity reports",
       color: Colors.info,
     },
+    {
+      href: "/notification-center",
+      title: "Notification Center",
+      icon: "notifications-none",
+      description: "View and manage notifications",
+      color: Colors.info,
+    },
   ];
 
   const clientMenuItems: MenuItemProps[] = [
@@ -127,21 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.surfaceLight,
   },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
   headerTitle: {
     fontSize: 34,
     fontWeight: "bold",
@@ -166,34 +158,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 15,
     backgroundColor: Colors.componentBg,
-    borderRadius: 12,
     marginBottom: 10,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: Colors.divider,
   },
   iconContainer: {
     width: 50,
     height: 50,
-    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 15,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
   },
   textContainer: {
     flex: 1,
