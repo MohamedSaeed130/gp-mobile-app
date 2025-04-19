@@ -76,14 +76,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 15,
     marginBottom: 10,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    borderColor: Colors.border,
+    borderWidth: 2,
   },
   mainContent: {
     flexDirection: "row",

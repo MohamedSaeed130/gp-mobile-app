@@ -45,16 +45,8 @@ const SavedLaptopsSection = ({
 const styles = StyleSheet.create({
   section: {
     marginTop: 20,
-    borderRadius: 12,
+    marginBottom: 20,
     padding: 15,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   title: {
     fontSize: 20,

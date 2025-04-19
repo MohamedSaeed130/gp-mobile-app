@@ -23,7 +23,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputGroup}>
+      <View>
         <Text style={styles.label}>Connection Name</Text>
         <TextInput
           style={styles.input}
@@ -35,7 +35,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
         />
       </View>
 
-      <View style={styles.inputGroup}>
+      <View>
         <Text style={styles.label}>IP Address</Text>
         <TextInput
           style={styles.input}
@@ -48,7 +48,7 @@ const ConnectionForm = ({ onConnect, isLoading }: ConnectionFormProps) => {
         />
       </View>
 
-      <View style={styles.inputGroup}>
+      <View>
         <Text style={styles.label}>Port</Text>
         <TextInput
           style={styles.input}
@@ -93,18 +93,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     borderRadius: 12,
-    marginBottom: 20,
-    shadowColor: Colors.textPrimary,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  inputGroup: {
-    marginBottom: 15,
   },
   label: {
     fontSize: 14,

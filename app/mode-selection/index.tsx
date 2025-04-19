@@ -116,7 +116,7 @@ export default function ModeSelectionScreen() {
           ))}
         </View>
       </ScrollView>
-      <StartControl selectedMode={selectedMode} onStopComplete={() => setSelectedMode(null)} />
+      <StartControl selectedMode={selectedMode} />
     </View>
   );
 }
