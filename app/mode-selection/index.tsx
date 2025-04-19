@@ -85,18 +85,18 @@ export default function ModeSelectionScreen() {
 
   return (
     <View style={styles.container}>
-      <ScreenHeader
-        title="Control Mode"
-        icon={
-          <MaterialIcons
-            name="settings-input-component"
-            size={28}
-            color={Colors.textSecondary}
-          />
-        }
-      />
-
       <ScrollView style={styles.content}>
+        <ScreenHeader
+          title="Control Mode"
+          icon={
+            <MaterialIcons
+              name="settings-input-component"
+              size={28}
+              color={Colors.textSecondary}
+            />
+          }
+        />
+
         <CurrentLaptopConnection />
 
         <ConnectionBanner />
@@ -116,7 +116,7 @@ export default function ModeSelectionScreen() {
           ))}
         </View>
       </ScrollView>
-      <StartControl selectedMode={selectedMode} />
+      <StartControl selectedMode={selectedMode} onStopComplete={() => setSelectedMode(null)} />
     </View>
   );
 }
@@ -134,18 +134,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.textPrimary,
     marginBottom: 15,
-  },
-  footer: {
-    padding: 20,
-    backgroundColor: `${Colors.background}E6`,
-  },
-  startButton: {
-    backgroundColor: Colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderRadius: 12,
   },
   buttonDisabled: {
     backgroundColor: Colors.textLight,

@@ -17,6 +17,7 @@ interface LaptopControlContextType {
   alarm: { on: () => void; off: () => void };
   speed: { increase: () => void; decrease: () => void };
   selectMode: (mode: ControlMode) => void;
+  reset: () => void;
 }
 
 // Create the context
@@ -97,6 +98,8 @@ export function LaptopControlProvider({
   const selectMode = (mode: ControlMode) =>
     mode && sendMessage("select_mode:" + mode);
 
+  const reset = () => sendMessage("reset");
+
   const value = {
     padMove,
     joystickMove,
@@ -104,6 +107,7 @@ export function LaptopControlProvider({
     alarm,
     speed,
     selectMode,
+    reset,
   };
 
   return (

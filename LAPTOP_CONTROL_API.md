@@ -4,6 +4,10 @@
 
 This API describes the string commands sent from the application to the laptop, which then forwards these commands to the ESP32 microcontroller.
 
+## Control Signals
+
+- "reset": Terminates current control mode, and stops movement
+
 ## Control Buttons
 
 - "remote:light_on": Turns on the ESP32's LED lights
@@ -27,7 +31,6 @@ This API describes the string commands sent from the application to the laptop, 
 - "select_mode:face": Switches to face tracking mode - device follows user's face movements
 - "select_mode:hand": Switches to hand gesture mode - device responds to hand gesture commands
 - "select_mode:voice": Switches to voice commands mode - device responds to voice commands
-- "select_mode:reset": Deselects any mode in operation
 
 ## Communication Flow
 
