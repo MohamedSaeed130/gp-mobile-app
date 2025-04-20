@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { LaptopConnection } from "../../types/LaptopConnection";
+import { LaptopConnection } from "../../types/ui/LaptopConnection";
 import SavedLaptopCard from "./SavedLaptopCard";
 import Colors from "../../constants/Colors";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import DeviceListItem from "./DeviceListItem";
-import { BluetoothDevice } from "../../types/ESPConnection";
+import { BluetoothDevice } from "../../types/ui/ESPConnection";
 
 interface DeviceListProps {
   devices: BluetoothDevice[];

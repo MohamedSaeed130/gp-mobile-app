@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
-import { ControlMode } from "../../types/ControlMode";
+import { ControlMode } from "../../types/ui/ControlMode";
 import { useLaptopControl } from "../../contexts/LaptopControlContext";
 import Colors from "../../constants/Colors";
 import StopControlButton from "./StopControlButton";

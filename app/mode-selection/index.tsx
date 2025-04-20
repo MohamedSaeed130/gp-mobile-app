@@ -6,7 +6,7 @@ import ConnectionBanner from "../../components/mode-selection//ConnectionBanner"
 import ModeCard from "../../components/mode-selection//ModeCard";
 import ScreenHeader from "../../components/ScreenHeader";
 import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
-import { ControlMode } from "../../types/ControlMode";
+import { ControlMode } from "../../types/ui/ControlMode";
 import Colors from "../../constants/Colors";
 import StartControl from "../../components/mode-selection/StartControl";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LaptopConnection } from "../../types/LaptopConnection";
+import { LaptopConnection } from "../../types/ui/LaptopConnection";
 import Colors from "../../constants/Colors";
 
 interface SavedLaptopCardProps {

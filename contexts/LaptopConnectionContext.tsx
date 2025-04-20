@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useRef } from "react";
-import { LaptopConnection } from "../types/LaptopConnection";
+import { LaptopConnection } from "../types/ui/LaptopConnection";
 
 interface LaptopConnectionContextType {
   error: string | null;

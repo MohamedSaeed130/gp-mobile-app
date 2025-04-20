@@ -6,7 +6,7 @@ import ConnectionForm from "../../components/laptop-connnection/ConnectionForm";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 import ScreenHeader from "../../components/ScreenHeader";
 import SavedLaptopsSection from "../../components/laptop-connnection/SavedLaptopsSection";
-import { LaptopConnection } from "../../types/LaptopConnection";
+import { LaptopConnection } from "../../types/ui/LaptopConnection";
 import CurrentConnection from "../../components/CurrentLaptopConnection";
 import Colors from "../../constants/Colors";
 

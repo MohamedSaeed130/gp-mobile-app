@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useCallback } from "react";
 import { JoystickData } from "../components/remote-control/JoystickController";
 import { useLaptopConnection } from "./LaptopConnectionContext";
-import { ControlMode } from "../types/ControlMode";
+import { ControlMode } from "../types/ui/ControlMode";
 
 // Define the context type
 interface LaptopControlContextType {

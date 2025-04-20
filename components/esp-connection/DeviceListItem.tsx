@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { BluetoothDevice } from "../../types/ESPConnection";
+import { BluetoothDevice } from "../../types/ui/ESPConnection";
 
 interface DeviceListItemProps {
   device: BluetoothDevice;
