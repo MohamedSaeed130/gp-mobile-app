@@ -3,6 +3,7 @@ import { Relation } from "../types/api/Relations";
 import { UserInfo, UserProfile, UserProfileChange } from "../types/api/Users";
 import { Notification, ResponseNotification } from "../types/api/Notifications";
 import { fetchUserInfo } from "./usersAPI";
+import APIError from "../errors/APIError";
 
 // =======================
 // GET
@@ -12,7 +13,7 @@ const fetchMy = async <T>(path: string, accessToken: string): Promise<T> => {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   const body = await response.json();
-  if (body.status !== "success") throw new Error();
+  if (body.status === "error") throw new APIError(body.error);
 
   return body.data;
 };
@@ -29,7 +30,7 @@ export const fetchMyProfile = async (accessToken: string) =>
 export const fetchMyNotifications = async (
   query: { page: number; size: number },
   accessToken: string
-): Promise<Notification[]> => {
+): Promise<{ total: number; notifications: Notification[] }> => {
   const response = await fetch(
     `${API_BASE_URL}/me/notifications?page=${query.page}&size=${query.size}`,
     {
@@ -37,30 +38,32 @@ export const fetchMyNotifications = async (
     }
   );
   const body = await response.json();
-  if (body.status !== "success") throw new Error();
+  if (body.status === "error") throw new APIError(body.error);
 
   const notifications = await Promise.all(
-    body.data.map(async (resNotification: ResponseNotification) => {
-      const notification: any = { ...resNotification };
-      const sender =
-        resNotification.senderId == 0
-          ? "system"
-          : await fetchUserInfo(resNotification.senderId, accessToken);
-      const about = await fetchUserInfo(
-        resNotification.relatedUserId,
-        accessToken
-      );
+    body.data.notifications.map(
+      async (resNotification: ResponseNotification) => {
+        const notification: any = { ...resNotification };
+        const sender =
+          resNotification.senderId == 0
+            ? "system"
+            : await fetchUserInfo(resNotification.senderId, accessToken);
+        const about = await fetchUserInfo(
+          resNotification.relatedUserId,
+          accessToken
+        );
 
-      delete notification["senderId"];
-      delete notification["relatedUserId"];
-      notification.sender = sender;
-      notification.about = about;
+        delete notification["senderId"];
+        delete notification["relatedUserId"];
+        notification.sender = sender;
+        notification.about = about;
 
-      return notification;
-    })
+        return notification;
+      }
+    )
   );
 
-  return notifications;
+  return { total: body.data.total, notifications };
 };
 
 // =======================
@@ -78,6 +81,12 @@ export const changeProfile = async (
     },
     body: JSON.stringify(profileChange),
   });
-  const body = await response.json();
-  if (body.status !== "success") throw new Error();
+  if (!response.ok) {
+    const body = await response.json();
+    throw new APIError(
+      body?.status === "error"
+        ? body.error
+        : { message: "Failed to change profile" }
+    );
+  }
 };

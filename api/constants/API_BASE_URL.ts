@@ -1,1 +1,3 @@
-export default "http://server_ip:server_port/api";
+const IP = "192.168.1.68";
+const PORT = "8080";
+export default `http://${IP}:${PORT}`;

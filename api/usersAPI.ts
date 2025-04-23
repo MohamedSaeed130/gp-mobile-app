@@ -1,6 +1,7 @@
 import API_BASE_URL from "./constants/API_BASE_URL";
 import { UserInfo, UserProfile } from "../types/api/Users";
 import { NewNotification } from "../types/api/Notifications";
+import APIError from "../errors/APIError";
 
 // =======================
 // GET
@@ -14,7 +15,7 @@ const fetchUser = async <T>(
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   const body = await response.json();
-  if (body.status !== "success") throw new Error();
+  if (body.status === "error") throw new APIError(body.error);
 
   return body.data;
 };
@@ -43,7 +44,7 @@ const postUser = async <T>(
     body: JSON.stringify(payload),
   });
   const body = await response.json();
-  if (body.status !== "success") throw new Error();
+  if (body.status === "error") throw new APIError(body.error);
 
   return body.data;
 };
@@ -65,8 +66,8 @@ export const postRelationRequest = async (
   accessToken: string
 ) =>
   await postUser<{ relationId: number }>(
-    "notifications",
-    "",
+    "relations",
+    undefined,
     userId,
     accessToken
   );
