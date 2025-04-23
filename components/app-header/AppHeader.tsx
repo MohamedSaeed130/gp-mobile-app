@@ -2,19 +2,32 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { Link, usePathname, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
+import { useUserInfo } from "../../contexts/UserInfoContext";
 import Colors from "../../constants/Colors";
 import { HeaderDropdown } from "./HeaderDropdown";
+import * as authAPI from "../../api/authAPI";
+import { useTokens } from "../../contexts/TokensContext";
+import capitalize from "../../utils/capitalize";
 
 export default function AppHeader() {
+  const { userInfo } = useUserInfo();
+  const { accessToken } = useTokens();
+
   const pathname = usePathname();
   const router = useRouter();
-  const isHomeScreen = pathname === "/";
+  const isHomeScreen = pathname === "/home";
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log("Logout pressed");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      if (authAPI.logout) {
+        await authAPI.logout(accessToken);
+      }
+    } catch (e) {
+      // Optionally handle logout error
+    } finally {
+      router.push("/login");
+    }
   };
 
   return (
@@ -25,9 +38,14 @@ export default function AppHeader() {
             <Pressable
               style={styles.avatarContainer}
               onPress={() => setShowDropdown(!showDropdown)}
+              disabled={!userInfo}
             >
               <Image
-                source={require("../../assets/default-avatar.webp")}
+                source={
+                  userInfo && userInfo.img
+                    ? { uri: userInfo.img }
+                    : require("../../assets/default-avatar.webp")
+                }
                 style={styles.avatar}
               />
               <MaterialIcons
@@ -38,13 +56,22 @@ export default function AppHeader() {
               />
             </Pressable>
             <View style={styles.userTextContainer}>
-              <Text style={styles.userName}>Graduation Project 2025</Text>
-              <Text style={styles.userRole}>User</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                {userInfo?.title ? (
+                  <Text style={styles.userTitle}>{userInfo.title} </Text>
+                ) : null}
+                <Text style={styles.userName}>
+                  {userInfo?.fullName || "Unknown"}
+                </Text>
+              </View>
+              <Text style={styles.userRole}>
+                {(userInfo && capitalize(userInfo.role)) || "No-role"}
+              </Text>
             </View>
           </View>
 
           {!isHomeScreen && (
-            <Link href="/" asChild>
+            <Link href="/home" asChild>
               <Pressable
                 style={styles.homeButton}
                 android_ripple={{ color: Colors.headerIconBg }}
@@ -71,6 +98,12 @@ export default function AppHeader() {
 }
 
 const styles = StyleSheet.create({
+  userTitle: {
+    fontSize: 15,
+    color: "#cbd2de",
+    fontWeight: "bold",
+    marginRight: 4,
+  },
   headerContainer: {
     position: "relative",
     zIndex: 1,
