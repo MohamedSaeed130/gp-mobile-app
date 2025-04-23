@@ -1,12 +1,14 @@
 import React from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
+import { Notification } from "../../types/api/Notifications";
 import NotificationItem, { NotificationItemProps } from "./NotificationItem";
 
 interface NotificationListProps {
-  notifications: NotificationItemProps[];
+  notifications: Notification[];
   onEndReached?: () => void;
   ListHeaderComponent?: React.ReactElement;
   onDelete?: (index: number) => void;
+  onRead?: (id: number) => void;
 }
 
 export default function NotificationList({
@@ -14,6 +16,7 @@ export default function NotificationList({
   onEndReached,
   ListHeaderComponent,
   onDelete,
+  onRead,
 }: NotificationListProps) {
   if (!notifications.length) {
     return (
@@ -29,9 +32,10 @@ export default function NotificationList({
         <NotificationItem
           {...item}
           onDelete={() => onDelete && onDelete(index)}
+          onRead={() => onRead && onRead(item.id)}
         />
       )}
-      keyExtractor={(_, i) => i.toString()}
+      keyExtractor={(item, index) => item.id?.toString?.() ?? String(index)}
       contentContainerStyle={styles.list}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.2}

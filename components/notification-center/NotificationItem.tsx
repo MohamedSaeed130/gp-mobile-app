@@ -1,47 +1,33 @@
 import React, { useState, useRef } from "react";
 import { Animated } from "react-native";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import { NotificationType } from "./NotificationTypeBadge";
 
-import UserInfoRow, { UserInfo } from "./UserInfoRow";
+import UserInfoRow from "./UserInfoRow";
 
-export interface NotificationItemProps {
-  type: NotificationType;
-  title: string;
-  body: string;
-  createdAt: string;
-  isRead: boolean;
-  sender?: UserInfo | "system";
-  aboutUser: UserInfo;
-  readAt?: string;
+export interface NotificationItemProps extends Notification {
+  onDelete?: () => void;
+  onRead?: () => void;
 }
 
 const typeConfig = {
-  NORMAL: {
+  normal: {
     icon: "notifications-none",
     color: Colors.textSecondary,
     bg: "rgba(158,158,158,0.12)",
   },
-  WARNING: {
+  warning: {
     icon: "warning",
     color: Colors.warning,
     bg: "rgba(255,193,7,0.12)",
   },
-  EMERGENCY: {
+  emergency: {
     icon: "error",
     color: Colors.error,
     bg: "rgba(255,82,82,0.12)",
   },
-  SCHEDULE: {
+  schedule: {
     icon: "schedule",
     color: Colors.info,
     bg: "rgba(33,150,243,0.12)",
@@ -50,17 +36,7 @@ const typeConfig = {
 
 import { Alert } from "react-native";
 
-export interface NotificationItemProps {
-  type: NotificationType;
-  title: string;
-  body: string;
-  createdAt: string;
-  isRead: boolean;
-  sender?: UserInfo | "system";
-  aboutUser: UserInfo;
-  readAt?: string;
-  onDelete?: () => void;
-}
+import { Notification } from "../../types/api/Notifications";
 
 export default function NotificationItem({
   type,
@@ -69,14 +45,15 @@ export default function NotificationItem({
   createdAt,
   isRead: initialIsRead,
   sender,
-  aboutUser,
-  readAt: initialReadAt,
+  about: aboutUser,
+  updatedAt: initialReadAt,
   onDelete,
+  onRead,
 }: NotificationItemProps) {
   const [showStatusDetails, setShowStatusDetails] = useState(false);
   const [localIsRead, setLocalIsRead] = useState(initialIsRead);
   const [localReadAt, setLocalReadAt] = useState<string | undefined>(
-    initialReadAt
+    initialReadAt.toISOString()
   );
   const { icon, color, bg } = typeConfig[type];
   // Animated opacity for fade-out of checkbox only
@@ -95,6 +72,9 @@ export default function NotificationItem({
       }).start(({ finished }) => {
         if (finished) setCheckboxVisible(false);
       });
+      if (onRead) {
+        onRead();
+      }
     }
   };
 
@@ -107,7 +87,12 @@ export default function NotificationItem({
         { borderColor: Colors.border },
       ]}
     >
-      <View style={[styles.headerRow, { flexDirection: 'row', alignItems: 'center' }]}>
+      <View
+        style={[
+          styles.headerRow,
+          { flexDirection: "row", alignItems: "center" },
+        ]}
+      >
         <View style={[styles.iconCircle, { backgroundColor: bg }]}>
           <MaterialIcons name={icon as any} size={22} color={color} />
         </View>
@@ -185,7 +170,7 @@ export default function NotificationItem({
             {showStatusDetails ? (
               <>
                 <Text style={styles.statusDetail}>
-                  Sent: {formatDate(createdAt)}
+                  Sent: {formatDate(createdAt.toISOString())}
                 </Text>
                 {localIsRead && (
                   <Text style={styles.statusDetail}>
@@ -324,8 +309,8 @@ const styles = StyleSheet.create({
   checkBoxHeader: {
     minWidth: 44, // recommended minimum touch size
     minHeight: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 4,
     marginLeft: 8,
     backgroundColor: "rgba(0,0,0,0.03)",

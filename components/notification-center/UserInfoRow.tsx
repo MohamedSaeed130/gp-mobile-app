@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Colors from "../../constants/Colors";
-
-export interface UserInfo {
-  name: string;
-  role: string;
-  image?: string;
-}
+import { UserInfo } from "../../types/api/Users";
 
 interface UserInfoRowProps {
   user: UserInfo;
@@ -20,12 +15,12 @@ export default function UserInfoRow({ user, label, small, hideRole }: UserInfoRo
     <View style={[styles.row, small && styles.rowSmall]}>
       {
         <Image 
-          source={user.image ? { uri: user.image } : require('../../assets/default-avatar.webp')} 
+          source={user.img ? { uri: user.img } : require('../../assets/default-avatar.webp')} 
           style={[styles.avatar, small && styles.avatarSmall]} 
         />
       }
       <View style={styles.infoText}>
-        <Text style={[styles.name, small && styles.nameSmall]}>{user.name}</Text>
+        <Text style={[styles.name, small && styles.nameSmall]}>{user.fullName}</Text>
         {!hideRole && user.role && (
           <Text style={[styles.role, small && styles.roleSmall]}>{user.role}</Text>
         )}
