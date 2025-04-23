@@ -13,19 +13,21 @@ import Colors from '../../constants/Colors';
 interface AddRelationModalProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (id: string) => Promise<void>;
+  onAdd: (id: string, setStatus?: (status: { type: 'success' | 'error'; message: string }) => void) => Promise<void>;
 }
 
 const AddRelationModal = ({ visible, onClose, onAdd }: AddRelationModalProps) => {
   const [id, setId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const handleTextChange = (text: string) => {
     // Only allow numeric input
     const numericText = text.replace(/[^0-9]/g, '');
     setId(numericText);
     setError('');
+    setStatus(null);
   };
 
   const handleAdd = async () => {
@@ -37,9 +39,9 @@ const AddRelationModal = ({ visible, onClose, onAdd }: AddRelationModalProps) =>
     setError('');
     setIsLoading(true);
     try {
-      await onAdd(id.trim());
+      await onAdd(id.trim(), setStatus);
       setId('');
-      onClose();
+      // Don't close immediately; let user see the status
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add relation');
     } finally {
@@ -47,12 +49,19 @@ const AddRelationModal = ({ visible, onClose, onAdd }: AddRelationModalProps) =>
     }
   };
 
+  const handleClose = () => {
+    setStatus(null);
+    setId('');
+    setError('');
+    onClose();
+  };
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
@@ -70,6 +79,9 @@ const AddRelationModal = ({ visible, onClose, onAdd }: AddRelationModalProps) =>
           />
           
           {error ? <Text style={styles.error}>{error}</Text> : null}
+      {status && (
+        <Text style={[styles.status, status.type === 'success' ? styles.statusSuccess : styles.statusError]}>{status.message}</Text>
+      )}
 
           <View style={styles.buttonContainer}>
             <Pressable
@@ -97,6 +109,19 @@ const AddRelationModal = ({ visible, onClose, onAdd }: AddRelationModalProps) =>
 };
 
 const styles = StyleSheet.create({
+  status: {
+    fontSize: 14,
+    marginTop: 6,
+    marginBottom: 4,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  statusSuccess: {
+    color: Colors.success,
+  },
+  statusError: {
+    color: Colors.error,
+  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

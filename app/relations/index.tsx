@@ -4,88 +4,114 @@ import ScreenHeader from "../../components/ScreenHeader";
 import RelationsSearch from "../../components/relations/RelationsSearch";
 import RelationItem from "../../components/relations/RelationItem";
 import PendingRelationItem from "../../components/relations/PendingRelationItem";
-import RelationsTabs, { TabType } from "../../components/relations/RelationsTabs";
+import RelationsTabs, {
+  TabType,
+} from "../../components/relations/RelationsTabs";
 import FloatingActionButton from "../../components/relations/FloatingActionButton";
 import AddRelationModal from "../../components/relations/AddRelationModal";
 import Colors from "../../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
-import EmptySection from '../../components/relations/EmptySection';
-
-// Updated mock data with request types
-const mockPendingRelations = [
-  { id: "2468", name: "Alice Brown", type: "incoming" as const },
-  { id: "1357", name: "Bob Wilson", type: "incoming" as const },
-  { id: "3579", name: "Carol White", type: "outgoing" as const },
-];
-
-const mockAssociatedRelations = [
-  { id: "1234", name: "John Doe", status: "associated" },
-  { id: "5678", name: "Jane Smith", status: "associated" },
-  { id: "9012", name: "Mike Johnson", status: "associated" },
-];
+import EmptySection from "../../components/relations/EmptySection";
+import { UserInfo } from "../../types/api/Users";
+import * as relationsAPI from "../../api/relationsAPI";
+import * as usersAPI from "../../api/usersAPI";
+import { useRelations } from "../../contexts/RelationsContext";
+import ErrorMessage from "../../components/relations/ErrorMessage";
+import { useTokens } from "../../contexts/TokensContext";
 
 export default function Relations() {
+  const { accessToken } = useTokens();
+  const { relations, loading, error, refreshRelations } = useRelations();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<TabType>("associated");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [pendingRelations, setPendingRelations] =
-    useState(mockPendingRelations);
-  const [associatedRelations, setAssociatedRelations] = useState(
-    mockAssociatedRelations
-  );
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleAcceptRelation = (id: string) => {
-    const acceptedRelation = pendingRelations.find((r) => r.id === id);
-    if (acceptedRelation) {
-      setPendingRelations((prev) => prev.filter((r) => r.id !== id));
-      setAssociatedRelations((prev) => [
-        ...prev,
-        { ...acceptedRelation, status: "associated" },
-      ]);
+  // Categorize relations
+  const associatedRelations = relations.filter((r) => r.type === "relation");
+  const pendingIncoming = relations.filter((r) => r.type === "incoming");
+  const pendingOutgoing = relations.filter((r) => r.type === "outgoing");
+
+  // Accept incoming relation
+  const handleAcceptRelation = async (id: number) => {
+    try {
+      setErrorMessage("");
+      await relationsAPI.changeRelationRequestStatus(
+        "accepted",
+        id,
+        accessToken
+      );
+      await refreshRelations();
+    } catch (error: any) {
+      setErrorMessage(
+        error?.message || "Failed to accept relation. Please try again later."
+      );
     }
   };
 
-  const handleRejectRelation = (id: string) => {
-    setPendingRelations((prev) => prev.filter((r) => r.id !== id));
+  // Reject incoming relation
+  const handleRejectRelation = async (id: number) => {
+    try {
+      setErrorMessage("");
+      await relationsAPI.changeRelationRequestStatus(
+        "rejected",
+        id,
+        accessToken
+      );
+      await refreshRelations();
+    } catch (error: any) {
+      setErrorMessage(
+        error?.message || "Failed to reject relation. Please try again later."
+      );
+    }
   };
 
-  const handleCancelRequest = (id: string) => {
-    setPendingRelations(prev => prev.filter(r => r.id !== id));
+  // Cancel outgoing relation
+  const handleCancelRequest = async (id: number) => {
+    try {
+      setErrorMessage("");
+      await relationsAPI.changeRelationRequestStatus(
+        "canceled",
+        id,
+        accessToken
+      );
+      await refreshRelations();
+    } catch (error: any) {
+      setErrorMessage(
+        error?.message ||
+          "Failed to cancel relation request. Please try again later."
+      );
+    }
   };
 
-  const filteredPending = {
-    incoming: pendingRelations
-      .filter(r => r.type === 'incoming')
-      .filter(relation =>
-        relation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        relation.id.includes(searchQuery)
-      ),
-    outgoing: pendingRelations
-      .filter(r => r.type === 'outgoing')
-      .filter(relation =>
-        relation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        relation.id.includes(searchQuery)
-      ),
+  // Filtering helpers
+  const filterByQuery = (user: UserInfo | { id: number }) => {
+    const name = (user as UserInfo).fullName || String(user.id);
+    return (
+      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(user.id).includes(searchQuery)
+    );
   };
 
-  const filteredAssociated = associatedRelations.filter(
-    (relation) =>
-      relation.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      relation.id.includes(searchQuery)
+  const filteredAssociated = associatedRelations.filter((rel) =>
+    filterByQuery(rel.user)
   );
+  const filteredPending = {
+    incoming: pendingIncoming.filter((rel) => filterByQuery(rel.user)),
+    outgoing: pendingOutgoing.filter((rel) => filterByQuery(rel.user)),
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'associated':
+      case "associated":
         return filteredAssociated.length > 0 ? (
           filteredAssociated.map((relation) => (
             <RelationItem
               key={relation.id}
-              name={relation.name}
-              id={relation.id}
-              onPress={() => {
-                console.log("Pressed relation:", relation);
-              }}
+              user={relation.user as UserInfo}
+              relationType={relation.type}
+              relationId={relation.id}
+              onDelete={refreshRelations}
             />
           ))
         ) : (
@@ -94,14 +120,15 @@ export default function Relations() {
             icon="people-outline"
           />
         );
-
-      case 'incoming':
+      case "incoming":
         return filteredPending.incoming.length > 0 ? (
           filteredPending.incoming.map((relation) => (
             <PendingRelationItem
               key={relation.id}
-              name={relation.name}
-              id={relation.id}
+              name={
+                (relation.user as UserInfo).fullName || String(relation.user.id)
+              }
+              id={String(relation.user.id)}
               type="incoming"
               onAccept={() => handleAcceptRelation(relation.id)}
               onReject={() => handleRejectRelation(relation.id)}
@@ -113,14 +140,13 @@ export default function Relations() {
             icon="call-received"
           />
         );
-
-      case 'outgoing':
+      case "outgoing":
         return filteredPending.outgoing.length > 0 ? (
           filteredPending.outgoing.map((relation) => (
             <PendingRelationItem
               key={relation.id}
-              name={relation.name}
-              id={relation.id}
+              name={"Unknown_ID" + relation.user.id}
+              id={String(relation.user.id)}
               type="outgoing"
               onCancel={() => handleCancelRequest(relation.id)}
             />
@@ -136,14 +162,27 @@ export default function Relations() {
 
   const getSectionTitle = () => {
     switch (activeTab) {
-      case 'associated':
-        return 'Associated Relations';
-      case 'incoming':
-        return 'Incoming Requests';
-      case 'outgoing':
-        return 'Outgoing Requests';
+      case "associated":
+        return "Associated Relations";
+      case "incoming":
+        return "Incoming Requests";
+      case "outgoing":
+        return "Outgoing Requests";
     }
   };
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text>Loading relations...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -151,6 +190,7 @@ export default function Relations() {
         title="Relations"
         icon={<FontAwesome name="users" size={24} color={Colors.primary} />}
       />
+      <ErrorMessage message={errorMessage || error || ""} />
       <RelationsSearch value={searchQuery} onSearch={setSearchQuery} />
       <RelationsTabs
         activeTab={activeTab}
@@ -172,21 +212,35 @@ export default function Relations() {
       <AddRelationModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        onAdd={async (id) => {
-          if (
-            associatedRelations.some((r) => r.id === id) ||
-            pendingRelations.some((r) => r.id === id)
-          ) {
-            throw new Error("This relation already exists");
+        onAdd={async (id, setStatus) => {
+          if (associatedRelations.some((r) => r.user.id == +id)) {
+            setStatus &&
+              setStatus({
+                type: "error",
+                message: "This relation already exists",
+              });
+            return;
           }
-          setPendingRelations((prev) => [
-            ...prev,
-            {
-              id,
-              name: `User ${id}`,
-              type: "outgoing",
-            },
-          ]);
+          try {
+            await usersAPI.postRelationRequest(+id, accessToken);
+            setStatus &&
+              setStatus({
+                type: "success",
+                message: "Relation request sent successfully",
+              });
+            // Wait 1s before closing and refreshing, so user sees the success message
+            setTimeout(async () => {
+              setIsModalVisible(false);
+              await refreshRelations(); // from context
+            }, 1000);
+          } catch (err) {
+            setStatus &&
+              setStatus({
+                type: "error",
+                message: "Failed to send relation request",
+              });
+            return;
+          }
         }}
       />
     </View>
@@ -208,7 +262,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     color: Colors.textPrimary,
     paddingHorizontal: 16,
     marginBottom: 12,
