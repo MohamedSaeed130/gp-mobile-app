@@ -33,7 +33,10 @@ export default function UserProfileScreen() {
       setLoading(true);
       setError(null);
       try {
-        const data = await usersAPI.fetchUserProfile(Number(userId), accessToken);
+        const data = await usersAPI.fetchUserProfile(
+          Number(userId),
+          accessToken
+        );
         setProfile(data);
       } catch (e) {
         setError("Failed to fetch user profile.");
@@ -100,14 +103,14 @@ export default function UserProfileScreen() {
           {profile.role === "caregiver" && (
             <>
               <ProfileMenuItem
-                icon="business"
-                label="Organization"
-                value={profile.organization}
-              />
-              <ProfileMenuItem
                 icon="star"
                 label="Title"
                 value={profile.title}
+              />
+              <ProfileMenuItem
+                icon="business"
+                label="Organization"
+                value={profile.organization}
               />
             </>
           )}
