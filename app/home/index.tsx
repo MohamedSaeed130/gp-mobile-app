@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useRelations } from "../../contexts/RelationsContext"; // Adjust path as needed
 import { useNotifications } from "../../contexts/NotificationsContext"; // Adjust path as needed
 import { useUserInfo } from "../../contexts/UserInfoContext";
+import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 
 export interface MenuItem {
   href: string;
@@ -63,19 +64,7 @@ const HomeScreen = () => {
   const { userInfo } = useUserInfo();
   const { relations } = useRelations();
   const { notifications } = useNotifications();
-  const [laptopConnectionStatus, setLaptopConnectionStatus] =
-    useState("Not Connected"); // 'Connected', 'Connecting', 'Not Connected'
-
-  useEffect(() => {
-    // Simulate checking laptop connection status
-    const intervalId = setInterval(() => {
-      const statuses = ["Connected", "Connecting", "Not Connected"];
-      const randomIndex = Math.floor(Math.random() * statuses.length);
-      setLaptopConnectionStatus(statuses[randomIndex]);
-    }, 3000);
-
-    return () => clearInterval(intervalId); // Cleanup interval on unmount
-  }, []);
+  const { laptopConnection } = useLaptopConnection();
 
   const clientMenuItems = clientMenuItemsBase.map((item) => {
     if (item.href === "/relations") {
@@ -107,16 +96,21 @@ const HomeScreen = () => {
     }
     if (item.href === "/laptop-connection") {
       let connectionColor = "#F44336"; // Red for Not Connected
-      if (laptopConnectionStatus === "Connected") {
+      let connectionStatusText = "Not Connected";
+      if (laptopConnection?.connectionStatus === "connected") {
         connectionColor = "#4CAF50"; // Green for Connected
-      } else if (laptopConnectionStatus === "Connecting") {
+        connectionStatusText = "Connected";
+      } else if (laptopConnection?.connectionStatus === "connecting") {
         connectionColor = "#FFC107"; // Amber for Connecting
+        connectionStatusText = "Connecting...";
+      } else if (
+        laptopConnection?.connectionStatus === "disconnected" ||
+        !laptopConnection
+      ) {
+        connectionColor = "#F44336"; // Red for Disconnected
+        connectionStatusText = "Not Connected";
       }
-      return {
-        ...item,
-        status: laptopConnectionStatus,
-        color: connectionColor,
-      };
+      return { ...item, status: connectionStatusText, color: connectionColor };
     }
     return item;
   });
