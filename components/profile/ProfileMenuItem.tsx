@@ -1,53 +1,58 @@
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import Colors from '../../constants/Colors';
+import { Text, StyleSheet, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import Colors from "../../constants/Colors";
 
 interface ProfileMenuItemProps {
   icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
   value?: string;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
-export const ProfileMenuItem = ({ icon, label, value, onPress }: ProfileMenuItemProps) => {
+export const ProfileMenuItem = ({
+  icon,
+  label,
+  value,
+}: ProfileMenuItemProps) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <View style={styles.leftContent}>
-        <MaterialIcons name={icon} size={24} color={Colors.textSecondary} />
+    <View style={styles.container}>
+      <MaterialIcons
+        name={icon}
+        size={24}
+        color={Colors.textSecondary}
+        style={styles.icon}
+      />
+      <View style={styles.textColumn}>
         <Text style={styles.label}>{label}</Text>
-      </View>
-      <View style={styles.rightContent}>
         {value && <Text style={styles.value}>{value}</Text>}
-        <MaterialIcons name="chevron-right" size={24} color={Colors.textLight} />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "flex-start",
     paddingVertical: 12,
     paddingHorizontal: 20,
-  },
-  leftContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 12,
   },
-  rightContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  icon: {
+    marginTop: 2,
+  },
+  textColumn: {
+    flex: 1,
+    flexDirection: "column",
   },
   label: {
     fontSize: 16,
     color: Colors.textPrimary,
+    marginBottom: 2,
+    fontWeight: "500",
   },
   value: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.textSecondary,
   },
 });

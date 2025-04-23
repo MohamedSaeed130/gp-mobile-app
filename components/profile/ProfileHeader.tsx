@@ -4,13 +4,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import Colors from "../../constants/Colors";
 import { useState } from "react";
+import { UserRole } from "../../types/api/Users";
+import capitalize from "../../utils/capitalize";
 
 interface ProfileHeaderProps {
   fullName: string;
-  role: "Caregiver" | "Ward";
+  role: UserRole;
   accountId: string;
   imageUri?: string;
-  onEditPhoto: () => void;
+  onEditPhoto?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -38,22 +40,24 @@ export const ProfileHeader = ({
             <MaterialIcons name="person" size={40} color={Colors.textLight} />
           </View>
         )}
-        <TouchableOpacity style={styles.editButton} onPress={onEditPhoto}>
-          <MaterialIcons
-            name="camera-alt"
-            size={20}
-            color={Colors.background}
-          />
-        </TouchableOpacity>
+        {onEditPhoto && (
+          <TouchableOpacity style={styles.editButton} onPress={onEditPhoto}>
+            <MaterialIcons
+              name="camera-alt"
+              size={20}
+              color={Colors.background}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.name}>{fullName}</Text>
       <View style={styles.roleContainer}>
         <MaterialIcons
-          name={role === "Caregiver" ? "medical-services" : "accessibility"}
+          name={role === "caregiver" ? "medical-services" : "accessibility"}
           size={16}
           color={Colors.textSecondary}
         />
-        <Text style={styles.role}>{role}</Text>
+        <Text style={styles.role}>{capitalize(role)}</Text>
       </View>
       <TouchableOpacity onPress={handleCopyId} style={styles.idContainer}>
         <Fontisto name="hashtag" size={16} color={Colors.textSecondary} />
