@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import Colors from '../../constants/Colors';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import Colors from "../../constants/Colors";
 
 interface RolePickerProps {
   value: string;
@@ -19,8 +19,8 @@ export const RolePicker = ({ value, onChange, error }: RolePickerProps) => (
       accessibilityLabel="Select role"
     >
       <Picker.Item label="Select role..." value="" color={Colors.textLight} />
-      <Picker.Item label="Caregiver" value="Caregiver" />
-      <Picker.Item label="Ward" value="Ward" />
+      <Picker.Item label="Caregiver" value="caregiver" />
+      <Picker.Item label="Ward" value="ward" />
     </Picker>
   </View>
 );

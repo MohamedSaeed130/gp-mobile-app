@@ -15,18 +15,21 @@ import {
   validatePassword,
 } from "../../utils/validation";
 import { ValidationPopup } from "../ValidationPopup";
+import { UserRole } from "../../types/api/Users";
 
 interface RegisterFormProps {
   onSubmit: (data: {
     firstName: string;
     lastName: string;
     email: string;
+    role: UserRole;
     password: string;
-    role: string;
+    repeatPassword: string;
   }) => void;
+  loading?: boolean;
 }
 
-export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
+export const RegisterForm = ({ onSubmit, loading }: RegisterFormProps) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -110,7 +113,8 @@ export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
       lastName: formData.lastName,
       email: formData.email,
       password: formData.password,
-      role: formData.role,
+      repeatPassword: formData.repeatPassword,
+      role: formData.role as UserRole,
     });
   };
 
@@ -217,8 +221,16 @@ export const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
         />
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Create Account</Text>
+      <TouchableOpacity
+        style={[styles.button, loading && { opacity: 0.7 }]}
+        onPress={handleSubmit}
+        disabled={loading}
+      >
+        {loading ? (
+          <Text style={styles.buttonText}>Creating...</Text>
+        ) : (
+          <Text style={styles.buttonText}>Create Account</Text>
+        )}
       </TouchableOpacity>
 
       <View style={styles.loginContainer}>
