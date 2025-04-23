@@ -6,6 +6,10 @@ import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { usePathname } from "expo-router";
+import { TokensProvider } from "../contexts/TokensContext";
+import { UserInfoProvider } from "../contexts/UserInfoContext";
+import { RelationsProvider } from "../contexts/RelationsContext";
+import { NotificationsProvider } from "../contexts/NotificationsContext";
 
 // Configure splash screen options
 SplashScreen.setOptions({
@@ -17,7 +21,7 @@ export default function Layout() {
   const [appReady, setAppReady] = useState(false);
   const pathname = usePathname();
   const showHeader =
-    !pathname.includes("/login") && !pathname.includes("/register");
+    pathname != "/login" && pathname != "/register" && pathname != "/";
 
   useEffect(() => {
     async function prepare() {
@@ -40,23 +44,33 @@ export default function Layout() {
   }
 
   return (
-    <LaptopConnectionProvider>
-      <LaptopControlProvider>
-        <View style={{ flex: 1 }}>
-          {showHeader && <AppHeader />}
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="laptop-connection/index" />
-            <Stack.Screen name="remote-control/index" />
-            <Stack.Screen name="esp-connection/index" />
-            <Stack.Screen name="login/index" />
-            <Stack.Screen name="register/index" />
-            <Stack.Screen name="profile/index" />
-            <Stack.Screen name="relations/index" />
-            <Stack.Screen name="ward-report/index" />
-          </Stack>
-        </View>
-      </LaptopControlProvider>
-    </LaptopConnectionProvider>
+    <TokensProvider>
+      <RelationsProvider>
+        <NotificationsProvider>
+          <UserInfoProvider>
+            <LaptopConnectionProvider>
+              <LaptopControlProvider>
+                <View style={{ flex: 1 }}>
+                  {showHeader && <AppHeader />}
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="login/index" />
+                    <Stack.Screen name="home/index" />
+                    <Stack.Screen name="laptop-connection/index" />
+                    <Stack.Screen name="remote-control/index" />
+                    <Stack.Screen name="notification-center/index" />
+                    <Stack.Screen name="esp-connection/index" />
+                    <Stack.Screen name="register/index" />
+                    <Stack.Screen name="profile/index" />
+                    <Stack.Screen name="relations/index" />
+                    <Stack.Screen name="ward-report/index" />
+                  </Stack>
+                </View>
+              </LaptopControlProvider>
+            </LaptopConnectionProvider>
+          </UserInfoProvider>
+        </NotificationsProvider>
+      </RelationsProvider>
+    </TokensProvider>
   );
 }
