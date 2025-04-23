@@ -1,186 +1,264 @@
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useRelations } from "../../contexts/RelationsContext"; // Adjust path as needed
+import { useNotifications } from "../../contexts/NotificationsContext"; // Adjust path as needed
+import { useUserInfo } from "../../contexts/UserInfoContext";
 
-import CurrentLaptopConnection from "../../components/CurrentLaptopConnection";
-import Colors from "../../constants/Colors";
-import MenuItem, { MenuItemProps } from "../../components/MenuItem";
+export interface MenuItem {
+  href: string;
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+}
 
-export default function HomeScreen() {
-  // TODO: implement esp bluetooth connection functionality
-  // const [espConnected, setEspConnected] = useState(false);
+const clientMenuItemsBase: MenuItem[] = [
+  {
+    href: "/laptop-connection", // Ensure this matches your file path in the 'app' directory
+    title: "Laptop Connection",
+    icon: "laptop-outline",
+    color: "#007AFF", // Default Blue
+  },
+  {
+    href: "/mode-selection",
+    title: "Control Modes",
+    icon: "settings-outline",
+    color: "#FF9500", // Orange
+  },
+  // {
+  //   href: "/profile",
+  //   title: "Profile",
+  //   icon: "person-circle-outline",
+  //   color: "#34C759", // Green
+  // },
+  {
+    href: "/relations",
+    title: "Relations",
+    icon: "people-outline",
+    color: "#5856D6", // Purple
+  },
+  // {
+  //   href: "/ward-report",
+  //   title: "Ward Report",
+  //   icon: "document-text-outline",
+  //   color: "#4CD964", // Light Green
+  // },
+  {
+    href: "/notification-center",
+    title: "Notifications",
+    icon: "notifications-outline",
+    color: "#64B5F6", // A different shade of blue
+  },
+];
 
-  const devMenuItems: MenuItemProps[] = [
-    {
-      href: "/login",
-      title: "Login",
-      icon: "login",
-      description: "Sign in to your account",
-      color: Colors.info,
-    },
-    {
-      href: "/register",
-      title: "Register",
-      icon: "person-add",
-      description: "Create a new account",
-      color: Colors.success,
-    },
-    {
-      href: "/laptop-connection",
-      title: "Laptop Connection",
-      icon: "laptop",
-      description: "Connect to your laptop for remote control",
-      color: Colors.primary,
-    },
-    {
-      href: "/mode-selection",
-      title: "Control Modes",
-      icon: "settings-input-component",
-      description: "Select your preferred control method",
-      color: Colors.secondary,
-    },
-    {
-      href: "/remote-control",
-      title: "Remote Control",
-      icon: "gamepad",
-      description: "Control your wheelchair remotely",
-      color: "#FF3B30",
-    },
-    {
-      href: "/profile",
-      title: "Profile",
-      icon: "person",
-      description: "View and manage your profile",
-      color: "#34C759",
-    },
-    {
-      href: "/relations",
-      title: "Relations",
-      icon: "people",
-      description: "Manage your connections and friends",
-      color: Colors.info,
-    },
-    {
-      href: "/ward-report",
-      title: "Ward Report",
-      icon: "assessment",
-      description: "View medical status and activity reports",
-      color: Colors.info,
-    },
-    {
-      href: "/notification-center",
-      title: "Notification Center",
-      icon: "notifications-none",
-      description: "View and manage notifications",
-      color: Colors.info,
-    },
-  ];
+const HomeScreen = () => {
+  const router = useRouter();
+  const { userInfo } = useUserInfo();
+  const { relations } = useRelations();
+  const { notifications } = useNotifications();
+  const [laptopConnectionStatus, setLaptopConnectionStatus] =
+    useState("Not Connected"); // 'Connected', 'Connecting', 'Not Connected'
 
-  const clientMenuItems: MenuItemProps[] = [
-    {
-      href: "/laptop-connection",
-      title: "Laptop Connection",
-      icon: "laptop",
-      description: "Connect to your laptop for remote control",
-      color: Colors.primary,
-    },
-    {
-      href: "/mode-selection",
-      title: "Control Modes",
-      icon: "settings-input-component",
-      description: "Select your preferred control method",
-      color: Colors.secondary,
-    },
-    {
-      href: "/profile",
-      title: "Profile",
-      icon: "person",
-      description: "View and manage your profile",
-      color: "#34C759",
-    },
-    {
-      href: "/relations",
-      title: "Relations",
-      icon: "people",
-      description: "Manage your connections and friends",
-      color: Colors.info,
-    },
-    {
-      href: "/ward-report",
-      title: "Ward Report",
-      icon: "assessment",
-      description: "View medical status and activity reports",
-      color: Colors.info,
-    },
-  ];
+  useEffect(() => {
+    // Simulate checking laptop connection status
+    const intervalId = setInterval(() => {
+      const statuses = ["Connected", "Connecting", "Not Connected"];
+      const randomIndex = Math.floor(Math.random() * statuses.length);
+      setLaptopConnectionStatus(statuses[randomIndex]);
+    }, 3000);
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, []);
+
+  const clientMenuItems = clientMenuItemsBase.map((item) => {
+    if (item.href === "/relations") {
+      // Assuming 'relations' array contains all relation types,
+      // you might want to filter for 'incoming' relations based on your data structure.
+      const incomingRelationCount = relations.filter(
+        (relation) => relation.type === "incoming"
+      ).length;
+      return {
+        ...item,
+        badge:
+          incomingRelationCount > 0
+            ? incomingRelationCount.toString()
+            : undefined,
+      };
+    }
+    if (item.href === "/notifications") {
+      // Assuming your Notification type has an 'isRead' property
+      const unreadNotificationCount = notifications.filter(
+        (notification) => !notification.isRead
+      ).length;
+      return {
+        ...item,
+        badge:
+          unreadNotificationCount > 0
+            ? unreadNotificationCount.toString()
+            : undefined,
+      };
+    }
+    if (item.href === "/laptop-connection") {
+      let connectionColor = "#F44336"; // Red for Not Connected
+      if (laptopConnectionStatus === "Connected") {
+        connectionColor = "#4CAF50"; // Green for Connected
+      } else if (laptopConnectionStatus === "Connecting") {
+        connectionColor = "#FFC107"; // Amber for Connecting
+      }
+      return {
+        ...item,
+        status: laptopConnectionStatus,
+        color: connectionColor,
+      };
+    }
+    return item;
+  });
+
+  const renderItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={[styles.item, { backgroundColor: item.color }]}
+      onPress={() => router.push(item.href)} // Use router.push for navigation in Expo Router
+    >
+      <View style={styles.iconContainer}>
+        <Ionicons name={item.icon} size={30} color="white" />
+        {item.badge !== undefined && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{item.badge}</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.itemTitle}>{item.title}</Text>
+      {item.status && item.href === "/laptop-connection" ? (
+        <Text style={styles.itemStatus}>
+          {item.status === "Connected" && (
+            <Ionicons name="wifi" size={14} color="white" />
+          )}
+          {item.status === "Connecting" && (
+            <Ionicons name="wifi-outline" size={14} color="white" />
+          )}
+          {item.status === "Not Connected" && (
+            <Ionicons name="alert-circle-sharp" size={14} color="white" />
+          )}{" "}
+          {item.status}
+        </Text>
+      ) : item.status ? (
+        <Text style={styles.itemStatus}>{item.status}</Text>
+      ) : null}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Connection Status</Text>
-        <CurrentLaptopConnection />
+      <View style={styles.header}>
+        {userInfo?.fullName && (
+          <Text style={styles.headerTitle}>
+            Welcome,{"\n"}{" "}
+            {userInfo?.title && (
+              <Text style={styles.headerSubtitle}>
+                {userInfo.title} {userInfo.fullName}
+              </Text>
+            )}{" "}
+          </Text>
+        )}
+
+        {!userInfo?.fullName && (
+          <Text style={styles.headerTitle}>Welcome!</Text>
+        )}
       </View>
 
-      <ScrollView style={styles.content}>
-        <Text style={styles.sectionTitle}>Actions</Text>
-        {devMenuItems.map((item) => (
-          <MenuItem key={item.href} {...item} />
-        ))}
-      </ScrollView>
+      <FlatList
+        data={clientMenuItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.href}
+        numColumns={2}
+        contentContainerStyle={styles.gridContainer}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.surfaceLight,
+    backgroundColor: "#f4f4f4",
+    paddingTop: 60, // Adjust for status bar
   },
-  headerTitle: {
-    fontSize: 34,
-    fontWeight: "bold",
-    color: Colors.textPrimary,
+  header: {
+    paddingHorizontal: 20,
+    marginBottom: 30,
   },
   headerSubtitle: {
-    fontSize: 17,
-    color: Colors.textSecondary,
+    fontSize: 20,
+    color: "#777",
     marginTop: 5,
   },
-  content: {
-    paddingHorizontal: 20,
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: Colors.textPrimary,
-    marginBottom: 15,
+  gridContainer: {
+    paddingHorizontal: 10,
   },
-  menuItem: {
-    flexDirection: "row",
+  item: {
+    flex: 1,
+    backgroundColor: "#ddd",
+    borderRadius: 10,
+    padding: 20,
+    margin: 10,
     alignItems: "center",
-    padding: 15,
-    backgroundColor: Colors.componentBg,
-    marginBottom: 10,
+    justifyContent: "center",
+    height: 170, // Increased height to accommodate status
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   iconContainer: {
-    width: 50,
-    height: 50,
-    justifyContent: "center",
     alignItems: "center",
-    marginRight: 15,
+    justifyContent: "center",
+    position: "relative",
   },
-  textContainer: {
-    flex: 1,
-  },
-  menuItemTitle: {
-    fontSize: 17,
+  itemTitle: {
+    marginTop: 10,
+    fontSize: 16,
     fontWeight: "600",
-    color: Colors.textPrimary,
+    color: "white",
+    textAlign: "center",
   },
-  menuItemDescription: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginTop: 2,
+  badge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "#FF4D4D", // Red color for badge
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    minWidth: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  section: {
-    padding: 20,
+  badgeText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  itemStatus: {
+    marginTop: 5,
+    fontSize: 12,
+    color: "white",
+    textAlign: "center",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
+
+export default HomeScreen;
