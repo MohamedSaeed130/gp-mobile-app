@@ -5,7 +5,12 @@ import { Link } from 'expo-router';
 import { validateEmail, validatePassword } from '../../utils/validation';
 import { ValidationPopup } from '../ValidationPopup';
 
-export const LoginForm = ({ onSubmit }: { onSubmit: (email: string, password: string) => void }) => {
+interface LoginFormProps {
+  onSubmit: (email: string, password: string) => void;
+  loading?: boolean;
+}
+
+export const LoginForm = ({ onSubmit, loading = false }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -65,8 +70,16 @@ export const LoginForm = ({ onSubmit }: { onSubmit: (email: string, password: st
         onFocus={() => setTouched(prev => ({ ...prev, password: true }))}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Sign In</Text>
+      <TouchableOpacity
+        style={[styles.button, loading && { opacity: 0.7 }]}
+        onPress={handleSubmit}
+        disabled={loading}
+      >
+        {loading ? (
+          <Text style={styles.buttonText}>Signing In...</Text>
+        ) : (
+          <Text style={styles.buttonText}>Sign In</Text>
+        )}
       </TouchableOpacity>
 
       <View style={styles.registerContainer}>
