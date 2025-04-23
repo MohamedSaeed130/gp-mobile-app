@@ -1,7 +1,7 @@
 export const validateName = (name: string): boolean => {
-  // Allow names in any language, including spaces and hyphens
+  // Allow names in any language, including hyphens, but NOT spaces
   // Must be at least 2 characters long
-  const nameRegex = /^[\p{L}\s-]{2,}$/u;
+  const nameRegex = /^[\p{L}-]{2,}$/u;
   return nameRegex.test(name.trim());
 };
 
