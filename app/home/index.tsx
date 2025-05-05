@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -59,6 +59,48 @@ const clientMenuItemsBase: MenuItem[] = [
   },
 ];
 
+const caregiverMenuItemsBase: MenuItem[] = [
+  {
+    href: "/relations",
+    title: "Relations",
+    icon: "people-outline",
+    color: "#5856D6", // Purple
+  },
+  // {
+  //   href: "/patient-report",
+  //   title: "Patient Report",
+  //   icon: "document-text-outline",
+  //   color: "#4CD964", // Light Green
+  // },
+  {
+    href: "/notification-center",
+    title: "Notifications",
+    icon: "notifications-outline",
+    color: "#64B5F6", // A different shade of blue
+  },
+];
+
+const patientMenuItemsBase: MenuItem[] = [
+  {
+    href: "/laptop-connection", // Ensure this matches your file path in the 'app' directory
+    title: "Laptop Connection",
+    icon: "laptop-outline",
+    color: "#007AFF", // Default Blue
+  },
+  {
+    href: "/mode-selection",
+    title: "Control Modes",
+    icon: "settings-outline",
+    color: "#FF9500", // Orange
+  },
+  {
+    href: "/relations",
+    title: "Relations",
+    icon: "people-outline",
+    color: "#5856D6", // Purple
+  },
+];
+
 const HomeScreen = () => {
   const router = useRouter();
   const { userInfo } = useUserInfo();
@@ -66,9 +108,12 @@ const HomeScreen = () => {
   const { notifications } = useNotifications();
   const { laptopConnection } = useLaptopConnection();
 
-  const clientMenuItems = clientMenuItemsBase.map((item) => {
+  const clientMenuItems = (
+    userInfo?.role == "caregiver"
+      ? caregiverMenuItemsBase
+      : patientMenuItemsBase
+  ).map((item) => {
     if (item.href === "/relations") {
-      // Assuming 'relations' array contains all relation types,
       // you might want to filter for 'incoming' relations based on your data structure.
       const incomingRelationCount = relations.filter(
         (relation) => relation.type === "incoming"
@@ -81,8 +126,7 @@ const HomeScreen = () => {
             : undefined,
       };
     }
-    if (item.href === "/notifications") {
-      // Assuming your Notification type has an 'isRead' property
+    if (item.href === "/notification-center") {
       const unreadNotificationCount = notifications.filter(
         (notification) => !notification.isRead
       ).length;
@@ -154,11 +198,9 @@ const HomeScreen = () => {
         {userInfo?.fullName && (
           <Text style={styles.headerTitle}>
             Welcome,{"\n"}{" "}
-            {userInfo?.title && (
-              <Text style={styles.headerSubtitle}>
-                {userInfo.title} {userInfo.fullName}
-              </Text>
-            )}{" "}
+            <Text style={styles.headerSubtitle}>
+              {userInfo.title || ""} {userInfo.fullName}
+            </Text>{" "}
           </Text>
         )}
 
