@@ -15,6 +15,16 @@ import ScreenHeader from "../../components/ScreenHeader";
 import * as notificationsAPI from "../../api/notificationsAPI";
 import { useNotifications } from "../../contexts/NotificationsContext";
 import { useTokens } from "../../contexts/TokensContext";
+import { postNotification } from "../../api/usersAPI";
+import { NotificationType } from "../../types/api/Notifications";
+
+export type onSubmitNewNotification = (
+  type: NotificationType,
+  title: string,
+  body: string,
+  receiverId: number,
+  aboutUserId: number
+) => Promise<void>;
 
 export default function NotificationCenterScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,13 +66,19 @@ export default function NotificationCenterScreen() {
     );
   }
 
-  const handleNewNotification = async (
-    type: string,
-    title: string,
-    body: string
+  const handleNewNotification: onSubmitNewNotification = async (
+    type,
+    title,
+    body,
+    receiverId,
+    aboutUserId
   ) => {
     setSending(true);
-    // TODO: Implement actual notification sending logic (API call)
+    await postNotification(
+      { type, title, body, relatedUserId: aboutUserId },
+      receiverId,
+      accessToken
+    );
     setTimeout(() => {
       setSending(false);
       setModalVisible(false);
@@ -72,33 +88,7 @@ export default function NotificationCenterScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginBottom: 10,
-          }}
-        >
-          <Pressable
-            style={{
-              backgroundColor: Colors.primary,
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 8,
-            }}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text
-              style={{
-                color: Colors.background,
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              New Notification
-            </Text>
-          </Pressable>
-        </View>
+
         {error && (
           <Text
             style={{
@@ -133,6 +123,14 @@ export default function NotificationCenterScreen() {
           onSubmit={handleNewNotification}
           loading={sending}
         />
+        {/* Floating Action Button */}
+        <Pressable
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
+          accessibilityLabel="Create new notification"
+        >
+          <MaterialIcons name="add" size={28} color={Colors.background} />
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -146,5 +144,21 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 16,
+  },
+  fab: {
+    position: 'absolute',
+    right: 24,
+    bottom: 32,
+    backgroundColor: Colors.primary,
+    borderRadius: 32,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
   },
 });

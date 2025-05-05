@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useRelations } from "../../contexts/RelationsContext";
+import { UserDropdown } from "./UserDropdown";
+import { UserInfo } from "../../types/api/Users";
 import {
   Modal,
   View,
@@ -8,18 +11,19 @@ import {
   Pressable,
 } from "react-native";
 import Colors from "../../constants/Colors";
+import { onSubmitNewNotification } from "../../app/notification-center";
 
 const NOTIF_TYPES = [
-  { label: "Info", value: "info" },
+  { label: "Emergency", value: "emergency" },
   { label: "Warning", value: "warning" },
-  { label: "Success", value: "success" },
-  { label: "Error", value: "error" },
+  { label: "Schedule", value: "schedule" },
+  { label: "Normal", value: "normal" },
 ];
 
 interface NewNotificationModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (type: string, title: string, body: string) => void;
+  onSubmit: onSubmitNewNotification;
   loading?: boolean;
 }
 
@@ -29,23 +33,41 @@ export default function NewNotificationModal({
   onSubmit,
   loading = false,
 }: NewNotificationModalProps) {
+  const [openKey, setOpenKey] = useState<null | "receiver" | "aboutUser">(null);
+  const { relations } = useRelations();
+  // Only use relations with complete UserInfo
+  const users: UserInfo[] = relations
+    .map((r) => r.user)
+    .filter(
+      (u): u is UserInfo =>
+        !!(u && (u as UserInfo).fullName && (u as UserInfo).img !== undefined)
+    );
+  const [receiver, setReceiver] = useState<UserInfo | null>(null);
+  const [aboutUser, setAboutUser] = useState<UserInfo | null>(null);
   const [type, setType] = useState(NOTIF_TYPES[0].value);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
   const handleSend = () => {
-    if (!title.trim() || !body.trim()) return;
-    onSubmit(type, title, body);
+    if (!title.trim() || !body.trim() || !receiver || !aboutUser) return;
+    onSubmit(type as any, title, body, receiver.id, aboutUser.id);
   };
 
   const reset = () => {
     setType(NOTIF_TYPES[0].value);
     setTitle("");
     setBody("");
+    setReceiver(null);
+    setAboutUser(null);
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.modalBox}>
           <Text style={styles.header}>New Notification</Text>
@@ -55,13 +77,29 @@ export default function NewNotificationModal({
                 key={item.value}
                 style={[
                   styles.typeButton,
-                  type === item.value && styles.typeButtonActive,
+                  (styles as any)[`${item.value}Button`],
+                  type === item.value && [
+                    styles.typeButtonActive,
+                    {
+                      backgroundColor:
+                        item.value === "emergency"
+                          ? "#e53935" // Strong red
+                          : item.value === "warning"
+                          ? "#ffc107" // Bright yellow
+                          : item.value === "schedule"
+                          ? "#42a5f5" // Vivid blue
+                          : item.value === "normal"
+                          ? "#66bb6a" // Vivid green
+                          : undefined,
+                    },
+                  ],
                 ]}
                 onPress={() => setType(item.value)}
               >
                 <Text
                   style={[
                     styles.typeButtonText,
+                    (styles as any)[`${item.value}ButtonText`],
                     type === item.value && styles.typeButtonTextActive,
                   ]}
                 >
@@ -86,6 +124,22 @@ export default function NewNotificationModal({
             numberOfLines={5}
             editable={!loading}
           />
+          <UserDropdown
+            users={users}
+            selectedUser={receiver}
+            onSelect={setReceiver}
+            label="Receiver"
+            open={openKey === "receiver"}
+            setOpen={(v: boolean) => setOpenKey(v ? "receiver" : null)}
+          />
+          <UserDropdown
+            users={users}
+            selectedUser={aboutUser}
+            onSelect={setAboutUser}
+            label="About User"
+            open={openKey === "aboutUser"}
+            setOpen={(v: boolean) => setOpenKey(v ? "aboutUser" : null)}
+          />
           <View style={styles.actions}>
             <Pressable
               style={[styles.button, styles.cancelButton]}
@@ -93,16 +147,31 @@ export default function NewNotificationModal({
                 reset();
                 onClose();
               }}
-              disabled={loading}
             >
-              <Text style={styles.buttonText}>Cancel</Text>
+              <Text style={[styles.buttonText, { color: "#434060" }]}>
+                Cancel
+              </Text>
             </Pressable>
             <Pressable
-              style={[styles.button, styles.sendButton, (!title.trim() || !body.trim()) && { opacity: 0.6 }]}
+              style={[
+                styles.button,
+                styles.sendButton,
+                (!title.trim() || !body.trim() || !receiver || !aboutUser) && {
+                  opacity: 0.6,
+                },
+              ]}
               onPress={handleSend}
-              disabled={loading || !title.trim() || !body.trim()}
+              disabled={
+                loading ||
+                !title.trim() ||
+                !body.trim() ||
+                !receiver ||
+                !aboutUser
+              }
             >
-              <Text style={styles.buttonText}>{loading ? "Sending..." : "Send"}</Text>
+              <Text style={styles.buttonText}>
+                {loading ? "Sending..." : "Send"}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -146,11 +215,41 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: Colors.surfaceLight,
     marginHorizontal: 2,
+    borderWidth: 1,
+    borderColor: "transparent",
+    backgroundColor: "#fff",
+  },
+  // Emergency: Red
+  emergencyButton: {
+    borderColor: "#c62828",
+  },
+  emergencyButtonText: {
+    color: "#c62828",
+  },
+  // Warning: Yellow/Orange
+  warningButton: {
+    borderColor: "#ff9800",
+  },
+  warningButtonText: {
+    color: "#ff9800",
+  },
+  // Schedule: Blue
+  scheduleButton: {
+    borderColor: "#1976d2",
+  },
+  scheduleButtonText: {
+    color: "#1976d2",
+  },
+  // Normal: Green
+  normalButton: {
+    borderColor: "#388e3c",
+  },
+  normalButtonText: {
+    color: "#388e3c",
   },
   typeButtonActive: {
-    backgroundColor: Colors.primary,
+    // No border color change, only background color set dynamically
   },
   typeButtonText: {
     color: Colors.textSecondary,
