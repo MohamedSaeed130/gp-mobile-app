@@ -63,7 +63,7 @@ export default function Layout() {
                     <Stack.Screen name="register/index" />
                     <Stack.Screen name="profile/index" />
                     <Stack.Screen name="relations/index" />
-                    <Stack.Screen name="ward-report/index" />
+                    <Stack.Screen name="patient-report/index" />
                   </Stack>
                 </View>
               </LaptopControlProvider>

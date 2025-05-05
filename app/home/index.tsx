@@ -46,8 +46,8 @@ const clientMenuItemsBase: MenuItem[] = [
     color: "#5856D6", // Purple
   },
   // {
-  //   href: "/ward-report",
-  //   title: "Ward Report",
+  //   href: "/patient-report",
+  //   title: "Patient Report",
   //   icon: "document-text-outline",
   //   color: "#4CD964", // Light Green
   // },

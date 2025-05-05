@@ -1,4 +1,4 @@
-export type UserRole = "caregiver" | "ward";
+export type UserRole = "caregiver" | "patient";
 
 export interface UserInfo {
   id: number;

@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import { ReportHeader } from "../../components/ward-report/ReportHeader";
-import { VitalStat } from "../../components/ward-report/VitalStats";
-import ActivityChart from "../../components/ward-report/ActivityChart";
-import { NotificationsSection } from "../../components/ward-report/NotificationsSection";
+import { ReportHeader } from "../../components/patient-report/ReportHeader";
+import { VitalStat } from "../../components/patient-report/VitalStats";
+import ActivityChart from "../../components/patient-report/ActivityChart";
+import { NotificationsSection } from "../../components/patient-report/NotificationsSection";
 import { MaterialIcons } from "@expo/vector-icons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Colors from "../../constants/Colors";
 
-export default function WardReportScreen() {
+export default function PatientReportScreen() {
   const chartData = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [

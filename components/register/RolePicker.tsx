@@ -20,7 +20,7 @@ export const RolePicker = ({ value, onChange, error }: RolePickerProps) => (
     >
       <Picker.Item label="Select role..." value="" color={Colors.textLight} />
       <Picker.Item label="Caregiver" value="caregiver" />
-      <Picker.Item label="Ward" value="ward" />
+      <Picker.Item label="Patient" value="patient" />
     </Picker>
   </View>
 );

@@ -114,7 +114,7 @@ export default function UserProfileScreen() {
               />
             </>
           )}
-          {profile.role === "ward" && (
+          {profile.role === "patient" && (
             <ProfileMenuItem
               icon="healing"
               label="Impairment"
