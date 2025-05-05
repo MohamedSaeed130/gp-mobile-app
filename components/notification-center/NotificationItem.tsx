@@ -46,14 +46,15 @@ export default function NotificationItem({
   isRead: initialIsRead,
   sender,
   about: aboutUser,
-  updatedAt: initialReadAt,
+  updatedAt,
   onDelete,
   onRead,
 }: NotificationItemProps) {
+  const initialReadAt = updatedAt || createdAt;
   const [showStatusDetails, setShowStatusDetails] = useState(false);
   const [localIsRead, setLocalIsRead] = useState(initialIsRead);
   const [localReadAt, setLocalReadAt] = useState<string | undefined>(
-    initialReadAt.toISOString()
+    initialReadAt
   );
   const { icon, color, bg } = typeConfig[type];
   // Animated opacity for fade-out of checkbox only
@@ -170,7 +171,7 @@ export default function NotificationItem({
             {showStatusDetails ? (
               <>
                 <Text style={styles.statusDetail}>
-                  Sent: {formatDate(createdAt.toISOString())}
+                  Sent: {formatDate(createdAt)}
                 </Text>
                 {localIsRead && (
                   <Text style={styles.statusDetail}>

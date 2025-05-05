@@ -1,6 +1,6 @@
 import { UserInfo } from "./Users";
 
-type NotificationType = "emergency" | "warning" | "schedule" | "normal";
+export type NotificationType = "emergency" | "warning" | "schedule" | "normal";
 
 export interface ResponseNotification {
   id: number;
@@ -10,8 +10,8 @@ export interface ResponseNotification {
   relatedUserId: number;
   senderId: number;
   isRead: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type Notification = Omit<
