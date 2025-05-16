@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import * as relationsAPI from "../../api/relationsAPI";
 import { useTokens } from "../../contexts/TokensContext";
 import capitalize from "../../utils/capitalize";
+import { useUserInfo } from "../../contexts/UserInfoContext";
 
 interface RelationItemProps {
   user: UserInfo;
@@ -21,6 +22,8 @@ const RelationItem = ({
   relationId,
   onDelete,
 }: RelationItemProps) => {
+  const { userInfo } = useUserInfo();
+  const myRole = userInfo?.role;
   const { accessToken } = useTokens();
   const { fullName, role, img, id } = user;
   const initial =
@@ -58,6 +61,11 @@ const RelationItem = ({
     setConfirmDelete(false);
   };
 
+  const handleShowReport = () => {
+    setMenuVisible(false);
+    router.push({ pathname: "/patient-report", params: { userId: id } });
+  };
+
   const renderMenu = () =>
     menuVisible && (
       <View style={styles.menuOverlay}>
@@ -67,12 +75,17 @@ const RelationItem = ({
               <Pressable style={styles.menuItem} onPress={handleShowProfile}>
                 <Text style={styles.menuText}>Show Profile</Text>
               </Pressable>
+              {role === "patient" && myRole === "caregiver" && (
+                <Pressable style={styles.menuItem} onPress={handleShowReport}>
+                  <Text style={styles.menuText}>Show Report</Text>
+                </Pressable>
+              )}
               <Pressable
                 style={styles.menuItem}
                 onPress={handleAskDelete}
                 disabled={loading}
               >
-                <Text style={[styles.menuText, { color: Colors.error }]}> 
+                <Text style={[styles.menuText, { color: Colors.error }]}>
                   {loading ? "Deleting..." : "Delete Relation"}
                 </Text>
               </Pressable>
@@ -85,13 +98,17 @@ const RelationItem = ({
             </>
           ) : (
             <>
-              <Text style={[styles.menuText, { marginBottom: 12 }]}>Are you sure you want to delete this relation?</Text>
+              <Text style={[styles.menuText, { marginBottom: 12 }]}>
+                Are you sure you want to delete this relation?
+              </Text>
               <Pressable
                 style={styles.menuItem}
                 onPress={handleDelete}
                 disabled={loading}
               >
-                <Text style={[styles.menuText, { color: Colors.error }]}>Yes, Delete</Text>
+                <Text style={[styles.menuText, { color: Colors.error }]}>
+                  Yes, Delete
+                </Text>
               </Pressable>
               <Pressable
                 style={styles.menuItem}
@@ -117,10 +134,16 @@ const RelationItem = ({
           )}
         </View>
         <View style={styles.info}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-  {user.title && <Text style={styles.title}>{user.title} </Text>}
-  <Text style={styles.name}>{fullName}</Text>
-</View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {user.title && <Text style={styles.title}>{user.title} </Text>}
+            <Text style={styles.name}>{fullName}</Text>
+          </View>
           {role && (
             <Text style={styles.field}>
               {capitalize(role)}
@@ -149,10 +172,16 @@ const RelationItem = ({
           )}
         </View>
         <View style={styles.info}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-  {user.title && <Text style={styles.title}>{user.title} </Text>}
-  <Text style={styles.name}>{fullName}</Text>
-</View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {user.title && <Text style={styles.title}>{user.title} </Text>}
+            <Text style={styles.name}>{fullName}</Text>
+          </View>
           {role && (
             <Text style={styles.field}>
               {capitalize(role)}
@@ -169,8 +198,8 @@ const RelationItem = ({
 const styles = StyleSheet.create({
   title: {
     fontSize: 14,
-    color: '#6C7A89', // blue-grey
-    fontWeight: 'bold',
+    color: "#6C7A89", // blue-grey
+    fontWeight: "bold",
     marginRight: 4,
   },
   container: {
