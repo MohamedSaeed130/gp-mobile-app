@@ -38,7 +38,11 @@ export default function NotificationCenterScreen() {
     try {
       await notificationsAPI.readNotification(notificationId, accessToken);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
+        prev.map((n) =>
+          n.id === notificationId
+            ? { ...n, isRead: true, updatedAt: new Date().toISOString() }
+            : n
+        )
       );
     } catch {}
   };
@@ -88,7 +92,6 @@ export default function NotificationCenterScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-
         {error && (
           <Text
             style={{
@@ -146,17 +149,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     right: 24,
     bottom: 32,
     backgroundColor: Colors.primary,
     borderRadius: 32,
     width: 56,
     height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 6,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.18,
     shadowRadius: 8,
