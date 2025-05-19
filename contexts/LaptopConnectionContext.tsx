@@ -2,6 +2,7 @@ import { createContext, useContext, ReactNode, useState, useRef } from "react";
 import { LaptopConnection } from "../types/ui/LaptopConnection";
 import { useTokens } from "./TokensContext";
 import { useUserInfo } from "./UserInfoContext";
+import { useVitalStats } from "./VitalStatsContext";
 
 interface LaptopConnectionContextType {
   error: string | null;
@@ -31,7 +32,13 @@ export function LaptopConnectionProvider({
   const [laptopConnection, setLaptopConnection] =
     useState<LaptopConnection | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-
+  // --- VitalStatsContext Integration ---
+  // Use a ref to always get the latest setters
+  const vitalStatsRef = {
+    current: null as null | ReturnType<typeof useVitalStats>,
+  };
+  // In provider body:
+  vitalStatsRef.current = useVitalStats();
   const connect = (ipAddress: string, port: string, name: string) => {
     try {
       setError(null);
@@ -87,7 +94,29 @@ export function LaptopConnectionProvider({
       };
 
       socketRef.current.onmessage = (event) => {
-        // Handle incoming messages if needed
+        try {
+          const data = JSON.parse(event.data);
+          if (
+            typeof data.temperature === "number" ||
+            typeof data.bloodOxygen === "number" ||
+            typeof data.heartRate === "number"
+          ) {
+            // Defensive: check for vitalStatsRef.current
+            if (vitalStatsRef.current) {
+              if (typeof data.temperature === "number") {
+                vitalStatsRef.current.setTemperature(data.temperature);
+              }
+              if (typeof data.bloodOxygen === "number") {
+                vitalStatsRef.current.setBloodOxygen(data.bloodOxygen);
+              }
+              if (typeof data.heartRate === "number") {
+                vitalStatsRef.current.setHeartRate(data.heartRate);
+              }
+            }
+          }
+        } catch (err) {
+          // Ignore malformed messages
+        }
       };
     } catch (err) {
       setError("Failed to construct WebSocket");
