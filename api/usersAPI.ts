@@ -2,6 +2,10 @@ import API_BASE_URL from "./constants/API_BASE_URL";
 import { UserInfo, UserProfile } from "../types/api/Users";
 import { NewNotification } from "../types/api/Notifications";
 import APIError from "../errors/APIError";
+import {
+  Duration,
+  UserVitalStatsResponse,
+} from "../types/api/VitalStats";
 
 // =======================
 // GET
@@ -25,6 +29,17 @@ export const fetchUserInfo = async (userId: number, accessToken: string) =>
 
 export const fetchUserProfile = async (userId: number, accessToken: string) =>
   await fetchUser<UserProfile>("profile", userId, accessToken);
+
+export const fetchUserVitalStats = async (
+  userId: number,
+  duration: Duration,
+  accessToken: string
+) =>
+  await fetchUser<UserVitalStatsResponse>(
+    "vital-stats?duration=" + duration,
+    userId,
+    accessToken
+  );
 
 // =======================
 // POST

@@ -104,7 +104,7 @@ const MedicalReportScreen: FC = () => {
             <RealTimeVitals />
           ) : (
             <View style={styles.chartSection}>
-              <ActivityChart />
+              <ActivityChart userId={Number(userId)} />
             </View>
           )}
         </View>
@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
     // This view simply acts as a container for the ActivityChart
     // If you need specific padding/margin around the chart, you can add it here.
   },
-  // Note: Vitals styles are now moved to RealTimeVitals.tsx
 });
 
 export default MedicalReportScreen;

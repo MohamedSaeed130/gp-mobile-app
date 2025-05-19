@@ -1,13 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Colors from "../../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useTokens } from "../../contexts/TokensContext";
+import { fetchUserVitalStats } from "../../api/usersAPI"; // Ensure this path is correct
+import { UserVitalStatsResponse } from "../../types/api/VitalStats";
 
 const screenWidth = Dimensions.get("window").width;
-
 const CHART_CONTAINER_HORIZONTAL_PADDING = 16;
 const CHART_CONTAINER_VERTICAL_PADDING = 14;
+
+// Assuming these interfaces are defined in your api/usersAPI.ts or similar
+interface VitalStat {
+  timestamp: Date;
+  heartRate: number;
+  bloodOxygen: number;
+  temperature: number;
+}
+
+type Duration = "hour" | "day" | "week"; // Define Duration type
 
 interface Dataset {
   data: number[];
@@ -17,10 +36,7 @@ interface Dataset {
 }
 
 // --- Helper function to format dates for display (for dateRange) ---
-const formatDateForRange = (
-  date: Date,
-  duration: "hour" | "day" | "week"
-): string => {
+const formatDateForRange = (date: Date, duration: Duration): string => {
   const options: Intl.DateTimeFormatOptions = {};
   if (duration === "hour") {
     options.hour = "2-digit";
@@ -32,121 +48,194 @@ const formatDateForRange = (
     options.day = "2-digit";
     options.month = "short";
   } else {
-    // week
     options.day = "2-digit";
     options.month = "short";
   }
   return date.toLocaleDateString(undefined, options);
 };
 
-// --- Helper function to generate chart labels ---
-const generateChartLabels = (duration: "hour" | "day" | "week"): string[] => {
-  const now = new Date();
-  const newLabels: string[] = [];
+// --- Helper function to generate chart labels based on fetched data ---
+const generateChartLabels = (
+  data: VitalStat[],
+  duration: Duration
+): string[] => {
+  if (!data || data.length === 0) return [];
+
+  // Sort data by timestamp to ensure correct ordering for labels
+  const sortedData = [...data].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
 
   if (duration === "hour") {
-    for (let i = 0; i <= 60; i += 10) {
-      const d = new Date(now.getTime() - (60 - i) * 60 * 1000);
-      newLabels.push(d.toLocaleTimeString([], { minute: "2-digit" }));
+    const labels: string[] = [];
+    if (sortedData.length > 0) {
+      const firstTime = new Date(sortedData[0].timestamp);
+      const lastTime = new Date(sortedData[sortedData.length - 1].timestamp);
+      // Generate labels every 10 minutes from the start of the data range, or a reasonable subset
+      const interval = 10 * 60 * 1000; // 10 minutes
+      for (
+        let t = firstTime.getTime();
+        t <= lastTime.getTime();
+        t += interval
+      ) {
+        labels.push(new Date(t).toLocaleTimeString([], { minute: "2-digit" }));
+      }
+      // Ensure the last data point's time is included if it's not near an interval
+      if (
+        labels.length > 0 &&
+        new Date(labels[labels.length - 1]).getTime() < lastTime.getTime()
+      ) {
+        labels.push(lastTime.toLocaleTimeString([], { minute: "2-digit" }));
+      }
     }
+    // Limit to a reasonable number of labels to avoid clutter
+    if (labels.length > 7) {
+      // Example limit
+      const step = Math.ceil(labels.length / 7);
+      return labels.filter((_, i) => i % step === 0);
+    }
+    return labels;
   } else if (duration === "day") {
-    for (let i = 0; i <= 24; i += 4) {
-      const d = new Date();
-      d.setHours(now.getHours() - (24 - i));
-      newLabels.push(
-        d.toLocaleTimeString([], { hour: "numeric", hour12: true })
+    // For day, generate labels for relevant hours (e.g., every 4 hours)
+    const labels: string[] = [];
+    if (sortedData.length > 0) {
+      const firstHour = new Date(sortedData[0].timestamp);
+      firstHour.setMinutes(0, 0, 0); // Start at the beginning of the hour
+      const lastHour = new Date(sortedData[sortedData.length - 1].timestamp);
+      lastHour.setMinutes(0, 0, 0);
+
+      for (
+        let h = firstHour.getTime();
+        h <= lastHour.getTime();
+        h += 4 * 60 * 60 * 1000
+      ) {
+        // Every 4 hours
+        labels.push(
+          new Date(h).toLocaleTimeString([], { hour: "numeric", hour12: true })
+        );
+      }
+      // Ensure the last data point's hour is included
+      if (
+        labels.length > 0 &&
+        new Date(labels[labels.length - 1]).getHours() !== lastHour.getHours()
+      ) {
+        labels.push(
+          lastHour.toLocaleTimeString([], { hour: "numeric", hour12: true })
+        );
+      }
+    }
+    return labels;
+  } else if (duration === "week") {
+    // Labels for "week" (last 7 days) typically show daily labels
+    const uniqueLabels = new Set<string>();
+    sortedData.forEach((d) => {
+      const date = new Date(d.timestamp);
+      uniqueLabels.add(
+        date.toLocaleDateString(undefined, { weekday: "short" })
       );
-    }
-  } else if (duration === "week") {
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(now.getDate() - i);
-      newLabels.push(d.toLocaleDateString(undefined, { weekday: "short" }));
-    }
+    });
+    return Array.from(uniqueLabels);
   }
-  return newLabels;
+  return [];
 };
 
-// --- Helper function to generate date range string ---
-const generateDateRangeString = (duration: "hour" | "day" | "week"): string => {
-  const now = new Date();
-  let fromDate: Date;
-  let toDate: Date = now;
+// --- Helper function to generate date range string based on fetched data ---
+const generateDateRangeString = (
+  data: VitalStat[],
+  duration: Duration
+): string => {
+  if (!data || data.length === 0) return "";
 
-  if (duration === "hour") {
-    fromDate = new Date(now.getTime() - 60 * 60 * 1000);
-    return `${fromDate.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })} - ${toDate.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
-  } else if (duration === "day") {
-    fromDate = new Date(now);
-    fromDate.setDate(now.getDate() - 1);
-    return `${formatDateForRange(fromDate, "day")} - ${formatDateForRange(
-      toDate,
-      "day"
-    )}`;
-  } else if (duration === "week") {
-    fromDate = new Date(now);
-    fromDate.setDate(now.getDate() - 6);
-    return `${formatDateForRange(fromDate, "week")} - ${formatDateForRange(
-      toDate,
-      "week"
-    )}`;
-  }
-  return ""; // Should not happen
+  const sortedData = [...data].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+  const firstTimestamp = new Date(sortedData[0].timestamp);
+  const lastTimestamp = new Date(sortedData[sortedData.length - 1].timestamp);
+
+  const formattedFrom = formatDateForRange(firstTimestamp, duration);
+  const formattedTo = formatDateForRange(lastTimestamp, duration);
+
+  return `${formattedFrom} - ${formattedTo}`;
 };
 
-const ActivityChart = () => {
-  // Define fixed chart title
+const ActivityChart = ({ userId }: { userId: number }) => {
+  const { accessToken } = useTokens();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchedData, setFetchedData] = useState<VitalStat[]>([]); // To store the extracted vitalStats array
+
   const title = "Vital Statistics";
 
-  // Define fixed datasets
-  const staticDatasets: Dataset[] = [
+  const staticDatasetsConfig: Omit<Dataset, "data">[] = [
     {
-      data: [72, 75, 82, 78, 71, 73, 76],
-      color: Colors.error || "#F44336", // Fallback color
+      color: Colors.error || "#F44336",
       label: "Heart Rate",
       icon: "favorite" as const,
     },
     {
-      data: [98, 97, 99, 96, 98, 97, 98],
-      color: Colors.info || "#2196F3", // Fallback color
+      color: Colors.info || "#2196F3",
       label: "Blood Oxygen",
       icon: "water-drop" as const,
     },
     {
-      data: [36.6, 36.8, 36.7, 36.9, 36.7, 36.6, 36.8],
-      color: Colors.warning || "#FFC107", // Fallback color
+      color: Colors.warning || "#FFC107",
       label: "Temperature",
       icon: "device-thermostat" as const,
     },
   ];
 
   const [visibleDatasets, setVisibleDatasets] = useState<Set<number>>(
-    new Set(staticDatasets.map((_, index) => index))
+    new Set(staticDatasetsConfig.map((_, index) => index))
   );
 
-  const [selectedDuration, setSelectedDuration] = useState<
-    "hour" | "day" | "week"
-  >("day");
-  const [dateRange, setDateRange] = useState<string>(() =>
-    generateDateRangeString("day")
-  );
-  const [chartLabels, setChartLabels] = useState<string[]>(() =>
-    generateChartLabels("day")
-  );
+  const [selectedDuration, setSelectedDuration] = useState<Duration>("day");
+  const [dateRange, setDateRange] = useState<string>("");
+  const [chartLabels, setChartLabels] = useState<string[]>([]);
 
   const chartWidth =
     screenWidth - 2 * 20 - 2 * CHART_CONTAINER_HORIZONTAL_PADDING;
 
+  // --- Effect to fetch data when dependencies change ---
   useEffect(() => {
-    setDateRange(generateDateRangeString(selectedDuration));
-    setChartLabels(generateChartLabels(selectedDuration));
-  }, [selectedDuration]);
+    const fetchData = async () => {
+      if (!userId || !accessToken) {
+        setFetchedData([]);
+        setDateRange("");
+        setChartLabels([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        // --- IMPORTANT CHANGE HERE ---
+        // Fetch the raw response object
+        const apiResponse: UserVitalStatsResponse = await fetchUserVitalStats(
+          userId,
+          selectedDuration,
+          accessToken
+        );
+
+        // Extract the vitalStats array from the response object
+        const vitalStatsArray = apiResponse?.vitalStats || [];
+
+        setFetchedData(vitalStatsArray); // Store the extracted array
+        setChartLabels(generateChartLabels(vitalStatsArray, selectedDuration));
+        setDateRange(
+          generateDateRangeString(vitalStatsArray, selectedDuration)
+        );
+      } catch (error) {
+        console.error("Failed to fetch vital stats:", error);
+        setFetchedData([]); // Ensure state is reset on error
+        setChartLabels([]);
+        setDateRange("Error loading data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId, accessToken, selectedDuration]); // Re-fetch when these change
 
   const toggleDataset = (index: number) => {
     const newVisible = new Set(visibleDatasets);
@@ -158,22 +247,39 @@ const ActivityChart = () => {
     setVisibleDatasets(newVisible);
   };
 
-  const handleDurationSelect = (duration: "hour" | "day" | "week") => {
+  const handleDurationSelect = (duration: Duration) => {
     setSelectedDuration(duration);
-    console.log(`Duration selected: ${duration}`);
+    // Labels and date range will be updated by the useEffect
   };
 
-  // Filter based on the staticDatasets
-  const filteredDatasets = staticDatasets.filter((_, index) =>
+  // Prepare chart datasets from fetched data
+  const chartDatasets: Dataset[] = staticDatasetsConfig.map((config) => {
+    let dataForChart: number[] = [];
+
+    // Map fetchedData (which is now the vitalStats array) to the respective vital sign data
+    if (fetchedData.length > 0) {
+      if (config.label === "Heart Rate") {
+        dataForChart = fetchedData.map((d) => d.heartRate);
+      } else if (config.label === "Blood Oxygen") {
+        dataForChart = fetchedData.map((d) => d.bloodOxygen);
+      } else if (config.label === "Temperature") {
+        dataForChart = fetchedData.map((d) => d.temperature);
+      }
+    }
+
+    return {
+      ...config,
+      data: dataForChart,
+    };
+  });
+
+  const filteredChartDatasets = chartDatasets.filter((_, index) =>
     visibleDatasets.has(index)
   );
 
   const chartData = {
     labels: chartLabels,
-    datasets: filteredDatasets.map((dataset) => ({
-      // IMPORTANT: In a real app, this `data` array should be fetched/filtered
-      // based on `selectedDuration` to align with the generated labels.
-      // For this example, we're still using the static data.
+    datasets: filteredChartDatasets.map((dataset) => ({
       data: dataset.data,
       color: (opacity = 1) => dataset.color,
       strokeWidth: 2,
@@ -184,66 +290,33 @@ const ActivityChart = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>{title}</Text>
-        {/* Use the internally defined title */}
-        {/* Duration Menu */}
         <View style={styles.durationMenu}>
-          <Pressable
-            style={[
-              styles.durationOption,
-              selectedDuration === "hour" && styles.durationOptionActive,
-            ]}
-            onPress={() => handleDurationSelect("hour")}
-          >
-            <Text
+          {["hour", "day", "week"].map((duration) => (
+            <Pressable
+              key={duration}
               style={[
-                styles.durationText,
-                selectedDuration === "hour" && styles.durationTextActive,
+                styles.durationOption,
+                selectedDuration === duration && styles.durationOptionActive,
               ]}
+              onPress={() => handleDurationSelect(duration as Duration)}
             >
-              Hour
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.durationOption,
-              selectedDuration === "day" && styles.durationOptionActive,
-            ]}
-            onPress={() => handleDurationSelect("day")}
-          >
-            <Text
-              style={[
-                styles.durationText,
-                selectedDuration === "day" && styles.durationTextActive,
-              ]}
-            >
-              Day
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.durationOption,
-              selectedDuration === "week" && styles.durationOptionActive,
-            ]}
-            onPress={() => handleDurationSelect("week")}
-          >
-            <Text
-              style={[
-                styles.durationText,
-                selectedDuration === "week" && styles.durationTextActive,
-              ]}
-            >
-              Week
-            </Text>
-          </Pressable>
+              <Text
+                style={[
+                  styles.durationText,
+                  selectedDuration === duration && styles.durationTextActive,
+                ]}
+              >
+                {duration.charAt(0).toUpperCase() + duration.slice(1)}
+              </Text>
+            </Pressable>
+          ))}
         </View>
       </View>
 
-      {/* Display From-To Date Range */}
       {dateRange ? <Text style={styles.dateRangeText}>{dateRange}</Text> : null}
 
       <View style={styles.legendContainer}>
-        {/* Iterate over the staticDatasets */}
-        {staticDatasets.map((dataset, index) => (
+        {staticDatasetsConfig.map((dataset, index) => (
           <Pressable
             key={dataset.label}
             style={({ pressed }) => [
@@ -281,7 +354,12 @@ const ActivityChart = () => {
         ))}
       </View>
 
-      {filteredDatasets.length > 0 ? (
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={styles.loadingText}>Loading vital stats...</Text>
+        </View>
+      ) : filteredChartDatasets.length > 0 && chartLabels.length > 0 ? (
         <LineChart
           data={chartData}
           width={chartWidth}
@@ -300,13 +378,18 @@ const ActivityChart = () => {
               r: "4",
               strokeWidth: "2",
             },
+            propsForLabels: {
+              fontSize: 10,
+            },
           }}
           bezier
           style={styles.chart}
         />
       ) : (
         <View style={styles.emptyChartContainer}>
-          <Text style={styles.emptyChartText}>No data selected.</Text>
+          <Text style={styles.emptyChartText}>
+            No vital data available for this period.
+          </Text>
         </View>
       )}
     </View>
@@ -398,6 +481,16 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
+  },
+  loadingContainer: {
+    height: 220,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: Colors.textSecondary || "#777",
   },
   emptyChartContainer: {
     height: 220,
