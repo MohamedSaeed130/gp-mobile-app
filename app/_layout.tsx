@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { LaptopConnectionProvider } from "../contexts/LaptopConnectionContext";
 import { LaptopControlProvider } from "../contexts/LaptopControlContext";
+import { VitalStatsProvider } from "../contexts/VitalStatsContext";
 import AppHeader from "../components/app-header/AppHeader";
 import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
@@ -48,12 +49,13 @@ export default function Layout() {
       <RelationsProvider>
         <NotificationsProvider>
           <UserInfoProvider>
-            <LaptopConnectionProvider>
-              <LaptopControlProvider>
-                <View style={{ flex: 1 }}>
-                  {showHeader && <AppHeader />}
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="index" />
+            <VitalStatsProvider>
+              <LaptopConnectionProvider>
+                <LaptopControlProvider>
+                  <View style={{ flex: 1 }}>
+                    {showHeader && <AppHeader />}
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="index" />
                     <Stack.Screen name="login/index" />
                     <Stack.Screen name="home/index" />
                     <Stack.Screen name="laptop-connection/index" />
@@ -68,6 +70,7 @@ export default function Layout() {
                 </View>
               </LaptopControlProvider>
             </LaptopConnectionProvider>
+            </VitalStatsProvider>
           </UserInfoProvider>
         </NotificationsProvider>
       </RelationsProvider>
