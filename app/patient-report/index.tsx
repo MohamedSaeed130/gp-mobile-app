@@ -1,4 +1,5 @@
 import React, { useState, useEffect, FC } from "react";
+import { useLaptopControl } from "../../contexts/LaptopControlContext"; // Import the hook
 import {
   ScrollView,
   StyleSheet,
@@ -39,6 +40,15 @@ const MedicalReportScreen: FC = () => {
     };
     fetchName();
   }, [userId, accessToken]);
+
+  // Start and stop real-time data streaming
+  const { sendRealTime, stopRealTime } = useLaptopControl();
+  useEffect(() => {
+    sendRealTime();
+    return () => {
+      stopRealTime();
+    };
+  }, [sendRealTime, stopRealTime]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
