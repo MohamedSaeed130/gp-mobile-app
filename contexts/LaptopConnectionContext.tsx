@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useRef } from "react";
 import { LaptopConnection } from "../types/ui/LaptopConnection";
 import { useTokens } from "./TokensContext";
+import { useUserInfo } from "./UserInfoContext";
 
 interface LaptopConnectionContextType {
   error: string | null;
@@ -23,6 +24,8 @@ export function LaptopConnectionProvider({
 }: {
   children: ReactNode;
 }) {
+  const { userInfo } = useUserInfo();
+  const userRole = userInfo?.role;
   const { accessToken } = useTokens();
   const [error, setError] = useState<string | null>(null);
   const [laptopConnection, setLaptopConnection] =
@@ -56,8 +59,8 @@ export function LaptopConnectionProvider({
               }
             : null
         );
-        // Send access token to laptop
-        sendMessage("access_token:"+accessToken);
+        // Send access token to laptop for patients
+        if (userRole === "patient") sendMessage("access_token:" + accessToken);
       };
 
       socketRef.current.onclose = () => {
