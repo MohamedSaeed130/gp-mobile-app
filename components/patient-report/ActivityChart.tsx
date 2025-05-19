@@ -54,30 +54,115 @@ const formatDateForRange = (date: Date, duration: Duration): string => {
   return date.toLocaleDateString(undefined, options);
 };
 
-// --- Updated generateChartLabels function ---
+// // --- Updated generateChartLabels function ---
+// const generateChartLabels = (
+//   data: VitalStat[],
+//   duration: Duration
+// ): string[] => {
+//   if (!data || data.length === 0) return [];
+
+//   const sortedData = [...data].sort(
+//     (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+//   );
+
+//   return sortedData.map((d) => {
+//     const date = new Date(d.timestamp);
+//     switch (duration) {
+//       case "hour":
+//         return date.toLocaleTimeString([], { minute: "2-digit" });
+//       case "day":
+//         return date.toLocaleTimeString([], { hour: "numeric", hour12: true });
+//       case "week":
+//         return date.toLocaleDateString(undefined, { weekday: "short" });
+//       default:
+//         return "";
+//     }
+//   });
+// };
+
+// --- Helper function to generate chart labels based on fetched data ---
 const generateChartLabels = (
   data: VitalStat[],
   duration: Duration
 ): string[] => {
   if (!data || data.length === 0) return [];
 
+  // Sort data by timestamp to ensure correct ordering for labels
   const sortedData = [...data].sort(
-    (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 
-  return sortedData.map((d) => {
-    const date = new Date(d.timestamp);
-    switch (duration) {
-      case "hour":
-        return date.toLocaleTimeString([], { minute: "2-digit" });
-      case "day":
-        return date.toLocaleTimeString([], { hour: "numeric", hour12: true });
-      case "week":
-        return date.toLocaleDateString(undefined, { weekday: "short" });
-      default:
-        return "";
+  if (duration === "hour") {
+    const labels: string[] = [];
+    if (sortedData.length > 0) {
+      const firstTime = new Date(sortedData[0].timestamp);
+      const lastTime = new Date(sortedData[sortedData.length - 1].timestamp);
+      // Generate labels every 10 minutes from the start of the data range, or a reasonable subset
+      const interval = 10 * 60 * 1000; // 10 minutes
+      for (
+        let t = firstTime.getTime();
+        t <= lastTime.getTime();
+        t += interval
+      ) {
+        labels.push(new Date(t).toLocaleTimeString([], { minute: "2-digit" }));
+      }
+      // Ensure the last data point's time is included if it's not near an interval
+      if (
+        labels.length > 0 &&
+        new Date(labels[labels.length - 1]).getTime() < lastTime.getTime()
+      ) {
+        labels.push(lastTime.toLocaleTimeString([], { minute: "2-digit" }));
+      }
     }
-  });
+    // Limit to a reasonable number of labels to avoid clutter
+    if (labels.length > 7) {
+      // Example limit
+      const step = Math.ceil(labels.length / 7);
+      return labels.filter((_, i) => i % step === 0);
+    }
+    return labels;
+  } else if (duration === "day") {
+    // For day, generate labels for relevant hours (e.g., every 4 hours)
+    const labels: string[] = [];
+    if (sortedData.length > 0) {
+      const firstHour = new Date(sortedData[0].timestamp);
+      firstHour.setMinutes(0, 0, 0); // Start at the beginning of the hour
+      const lastHour = new Date(sortedData[sortedData.length - 1].timestamp);
+      lastHour.setMinutes(0, 0, 0);
+
+      for (
+        let h = firstHour.getTime();
+        h <= lastHour.getTime();
+        h += 4 * 60 * 60 * 1000
+      ) {
+        // Every 4 hours
+        labels.push(
+          new Date(h).toLocaleTimeString([], { hour: "numeric", hour12: true })
+        );
+      }
+      // Ensure the last data point's hour is included
+      if (
+        labels.length > 0 &&
+        new Date(labels[labels.length - 1]).getHours() !== lastHour.getHours()
+      ) {
+        labels.push(
+          lastHour.toLocaleTimeString([], { hour: "numeric", hour12: true })
+        );
+      }
+    }
+    return labels;
+  } else if (duration === "week") {
+    // Labels for "week" (last 7 days) typically show daily labels
+    const uniqueLabels = new Set<string>();
+    sortedData.forEach((d) => {
+      const date = new Date(d.timestamp);
+      uniqueLabels.add(
+        date.toLocaleDateString(undefined, { weekday: "short" })
+      );
+    });
+    return Array.from(uniqueLabels);
+  }
+  return [];
 };
 
 // --- Helper function to generate date range string based on fetched data ---
@@ -388,7 +473,9 @@ const ActivityChart = ({ userId }: { userId: number }) => {
       ) : (
         <View style={styles.emptyChartContainer}>
           <Text style={styles.emptyChartText}>
-            No vital data available for this period.
+            {visibleDatasets.size == 0
+              ? "No dataset selected."
+              : "No vital data available for this period."}
           </Text>
         </View>
       )}
