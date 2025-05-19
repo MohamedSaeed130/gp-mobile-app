@@ -1,7 +1,7 @@
 import API_BASE_URL from "./constants/API_BASE_URL";
 import { Relation } from "../types/api/Relations";
 import { UserInfo, UserProfile, UserProfileChange } from "../types/api/Users";
-import { Notification, ResponseNotification } from "../types/api/Notifications";
+import { Notification, NotificationResponse } from "../types/api/Notifications";
 import { fetchUserInfo } from "./usersAPI";
 import APIError from "../errors/APIError";
 
@@ -42,7 +42,7 @@ export const fetchMyNotifications = async (
 
   const notifications = await Promise.all(
     body.data.notifications.map(
-      async (resNotification: ResponseNotification) => {
+      async (resNotification: NotificationResponse) => {
         const notification: any = { ...resNotification };
         const sender =
           resNotification.senderId == 0

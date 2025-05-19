@@ -2,10 +2,7 @@ import API_BASE_URL from "./constants/API_BASE_URL";
 import { UserInfo, UserProfile } from "../types/api/Users";
 import { NewNotification } from "../types/api/Notifications";
 import APIError from "../errors/APIError";
-import {
-  Duration,
-  UserVitalStatsResponse,
-} from "../types/api/VitalStats";
+import { Duration, VitalStatsResponse } from "../types/api/VitalStats";
 
 // =======================
 // GET
@@ -35,7 +32,7 @@ export const fetchUserVitalStats = async (
   duration: Duration,
   accessToken: string
 ) =>
-  await fetchUser<UserVitalStatsResponse>(
+  await fetchUser<VitalStatsResponse>(
     "vital-stats?duration=" + duration,
     userId,
     accessToken
