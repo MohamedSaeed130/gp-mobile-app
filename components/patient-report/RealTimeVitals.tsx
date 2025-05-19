@@ -1,5 +1,5 @@
 // components/patient-report/RealTimeVitals.tsx
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
@@ -10,23 +10,19 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import Colors from "../../constants/Colors"; // Make sure this path is correct based on your project structure
-import { VitalStat } from "../../types/api/VitalStats";
+import Colors from "../../constants/Colors";
+import { useVitalStats } from "../../contexts/VitalStatsContext";
 
 const { width } = Dimensions.get("window");
 
-type VitalStatWithoutTime = Omit<VitalStat, "timestamp">;
-// Helper function to simulate real-time data
-const generateRandomData = (): VitalStatWithoutTime => ({
-  heartRate: Math.floor(Math.random() * (100 - 60 + 1)) + 60, // 60-100 bpm
-  bloodOxygen: Math.floor(Math.random() * (100 - 95 + 1)) + 95, // 95-100% SpO2
-  temperature: parseFloat((Math.random() * (37.5 - 36.5) + 36.5).toFixed(1)), // 36.5-37.5 °C
-});
+interface RealTimeVitalsProps {}
 
-const RealTimeVitals: FC<{}> = () => {
-  const [heartRate, setHeartRate] = useState<number>(80);
-  const [bloodOxygen, setBloodOxygen] = useState<number>(98);
-  const [temperature, setTemperature] = useState<number>(37.0);
+const RealTimeVitals: FC<RealTimeVitalsProps> = () => {
+  const {
+    temperature: contextTemperature,
+    bloodOxygen: contextBloodOxygen,
+    heartRate: contextHeartRate,
+  } = useVitalStats();
 
   // Reanimated shared values for animations
   const hrPulse = useSharedValue<number>(1);
@@ -37,57 +33,51 @@ const RealTimeVitals: FC<{}> = () => {
   const spo2Color = useSharedValue<number>(0);
   const tempColor = useSharedValue<number>(0);
 
-  // Simulate real-time updates for all vitals
+  // Animate heart rate value change and update color based on context
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newData: VitalStatWithoutTime = generateRandomData();
-      setHeartRate(newData.heartRate);
-      setBloodOxygen(newData.bloodOxygen);
-      setTemperature(newData.temperature);
-    }, 2000); // Update every 2 seconds
+    if (contextHeartRate !== null) {
+      hrPulse.value = withSequence(
+        withTiming(1.1, { duration: 200, easing: Easing.ease }),
+        withTiming(1, { duration: 200, easing: Easing.ease })
+      );
 
-    return () => clearInterval(interval);
-  }, []);
+      let newHrColorValue: number = 0; // Normal
+      if (contextHeartRate > 90) newHrColorValue = 1; // Warning
+      if (contextHeartRate > 100) newHrColorValue = 2; // Critical
+      hrColor.value = withTiming(newHrColorValue, { duration: 500 });
+    }
+  }, [contextHeartRate]);
 
-  // Animate heart rate value change and update color
+  // Animate blood oxygen value change and update color based on context
   useEffect(() => {
-    hrPulse.value = withSequence(
-      withTiming(1.1, { duration: 200, easing: Easing.ease }),
-      withTiming(1, { duration: 200, easing: Easing.ease })
-    );
+    if (contextBloodOxygen !== null) {
+      spo2Pulse.value = withSequence(
+        withTiming(1.1, { duration: 200, easing: Easing.ease }),
+        withTiming(1, { duration: 200, easing: Easing.ease })
+      );
 
-    let newHrColorValue: number = 0; // Normal
-    if (heartRate > 90) newHrColorValue = 1; // Warning
-    if (heartRate > 100) newHrColorValue = 2; // Critical
-    hrColor.value = withTiming(newHrColorValue, { duration: 500 });
-  }, [heartRate]);
+      let newSpo2ColorValue: number = 0; // Normal
+      if (contextBloodOxygen < 97) newSpo2ColorValue = 1; // Warning
+      if (contextBloodOxygen < 95) newSpo2ColorValue = 2; // Critical
+      spo2Color.value = withTiming(newSpo2ColorValue, { duration: 500 });
+    }
+  }, [contextBloodOxygen]);
 
-  // Animate blood oxygen value change and update color
+  // Animate temperature value change and update color based on context
   useEffect(() => {
-    spo2Pulse.value = withSequence(
-      withTiming(1.1, { duration: 200, easing: Easing.ease }),
-      withTiming(1, { duration: 200, easing: Easing.ease })
-    );
+    if (contextTemperature !== null) {
+      tempPulse.value = withSequence(
+        withTiming(1.1, { duration: 200, easing: Easing.ease }),
+        withTiming(1, { duration: 200, easing: Easing.ease })
+      );
 
-    let newSpo2ColorValue: number = 0; // Normal
-    if (bloodOxygen < 97) newSpo2ColorValue = 1; // Warning
-    if (bloodOxygen < 95) newSpo2ColorValue = 2; // Critical
-    spo2Color.value = withTiming(newSpo2ColorValue, { duration: 500 });
-  }, [bloodOxygen]);
-
-  // Animate temperature value change and update color
-  useEffect(() => {
-    tempPulse.value = withSequence(
-      withTiming(1.1, { duration: 200, easing: Easing.ease }),
-      withTiming(1, { duration: 200, easing: Easing.ease })
-    );
-
-    let newTempColorValue: number = 0; // Normal
-    if (temperature > 37.2) newTempColorValue = 1; // Warning (low-grade fever)
-    if (temperature > 37.8) newTempColorValue = 2; // Critical (fever)
-    if (temperature < 36.0) newTempColorValue = 2; // Critical (hypothermia)
-    tempColor.value = withTiming(newTempColorValue, { duration: 500 });
-  }, [temperature]);
+      let newTempColorValue: number = 0; // Normal
+      if (contextTemperature > 37.2) newTempColorValue = 1; // Warning (low-grade fever)
+      if (contextTemperature > 37.8) newTempColorValue = 2; // Critical (fever)
+      if (contextTemperature < 36.0) newTempColorValue = 2; // Critical (hypothermia)
+      tempColor.value = withTiming(newTempColorValue, { duration: 500 });
+    }
+  }, [contextTemperature]);
 
   // Animated style for heart rate number and icon
   const animatedHrStyle = useAnimatedStyle(() => {
@@ -183,10 +173,17 @@ const RealTimeVitals: FC<{}> = () => {
           <Text style={styles.vitalLabel}>Heart Rate</Text>
         </View>
         <Animated.Text style={[styles.vitalValue, animatedHrStyle]}>
-          {heartRate} <Text style={styles.vitalUnit}>bpm</Text>
+          {contextHeartRate !== null ? `${contextHeartRate}` : "--"}
+          <Text style={styles.vitalUnit}> bpm</Text>
         </Animated.Text>
         <Text style={styles.statusText}>
-          {heartRate > 90 ? "High" : heartRate < 60 ? "Low" : "Normal"}
+          {contextHeartRate !== null
+            ? contextHeartRate > 90
+              ? "High"
+              : contextHeartRate < 60
+              ? "Low"
+              : "Normal"
+            : "---"}
         </Text>
       </Animated.View>
 
@@ -199,14 +196,17 @@ const RealTimeVitals: FC<{}> = () => {
           <Text style={styles.vitalLabel}>Blood Oxygen</Text>
         </View>
         <Animated.Text style={[styles.vitalValue, animatedSpo2Style]}>
-          {bloodOxygen} <Text style={styles.vitalUnit}>%</Text>
+          {contextBloodOxygen !== null ? `${contextBloodOxygen}` : "--"}
+          <Text style={styles.vitalUnit}> %</Text>
         </Animated.Text>
         <Text style={styles.statusText}>
-          {bloodOxygen < 95
-            ? "Low"
-            : bloodOxygen < 97
-            ? "Mildly Low"
-            : "Normal"}
+          {contextBloodOxygen !== null
+            ? contextBloodOxygen < 95
+              ? "Low"
+              : contextBloodOxygen < 97
+              ? "Mildly Low"
+              : "Normal"
+            : "---"}
         </Text>
       </Animated.View>
 
@@ -225,16 +225,21 @@ const RealTimeVitals: FC<{}> = () => {
           <Text style={styles.vitalLabel}>Temperature</Text>
         </View>
         <Animated.Text style={[styles.vitalValue, animatedTempStyle]}>
-          {temperature.toFixed(1)} <Text style={styles.vitalUnit}>°C</Text>
+          {contextTemperature !== null
+            ? `${contextTemperature?.toFixed(1)}`
+            : "--"}
+          <Text style={styles.vitalUnit}> °C</Text>
         </Animated.Text>
         <Text style={styles.statusText}>
-          {temperature > 37.8
-            ? "Fever"
-            : temperature > 37.2
-            ? "Elevated"
-            : temperature < 36.0
-            ? "Low"
-            : "Normal"}
+          {contextTemperature !== null
+            ? contextTemperature > 37.8
+              ? "Fever"
+              : contextTemperature > 37.2
+              ? "Elevated"
+              : contextTemperature < 36.0
+              ? "Low"
+              : "Normal"
+            : "---"}
         </Text>
       </Animated.View>
     </View>
