@@ -2,7 +2,7 @@ import { UserInfo } from "./Users";
 
 export type NotificationType = "emergency" | "warning" | "schedule" | "normal";
 
-export interface ResponseNotification {
+export interface NotificationResponse {
   id: number;
   type: NotificationType;
   title: string;
@@ -15,11 +15,11 @@ export interface ResponseNotification {
 }
 
 export type Notification = Omit<
-  ResponseNotification,
+  NotificationResponse,
   "relatedUserId" | "senderId"
 > & { about: UserInfo; sender: UserInfo | "system" };
 
 export type NewNotification = Omit<
-  ResponseNotification,
+  NotificationResponse,
   "id" | "senderId" | "isRead" | "createdAt" | "updatedAt"
 >;
