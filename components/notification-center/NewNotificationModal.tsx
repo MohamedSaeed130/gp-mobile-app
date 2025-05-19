@@ -79,7 +79,6 @@ export default function NewNotificationModal({
                   styles.typeButton,
                   (styles as any)[`${item.value}Button`],
                   type === item.value && [
-                    styles.typeButtonActive,
                     {
                       backgroundColor:
                         item.value === "emergency"
@@ -125,7 +124,7 @@ export default function NewNotificationModal({
             editable={!loading}
           />
           <UserDropdown
-            users={users}
+            users={users.filter((u) => u.role === "caregiver")}
             selectedUser={receiver}
             onSelect={setReceiver}
             label="Receiver"
@@ -133,7 +132,7 @@ export default function NewNotificationModal({
             setOpen={(v: boolean) => setOpenKey(v ? "receiver" : null)}
           />
           <UserDropdown
-            users={users}
+            users={users.filter((u) => u.role === "patient")}
             selectedUser={aboutUser}
             onSelect={setAboutUser}
             label="About User"
@@ -247,9 +246,6 @@ const styles = StyleSheet.create({
   },
   normalButtonText: {
     color: "#388e3c",
-  },
-  typeButtonActive: {
-    // No border color change, only background color set dynamically
   },
   typeButtonText: {
     color: Colors.textSecondary,
