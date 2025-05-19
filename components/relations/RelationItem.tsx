@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import Colors from "../../constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 import { UserInfo } from "../../types/api/Users";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -73,11 +74,17 @@ const RelationItem = ({
           {!confirmDelete ? (
             <>
               <Pressable style={styles.menuItem} onPress={handleShowProfile}>
-                <Text style={styles.menuText}>Show Profile</Text>
+                <View style={styles.menuRow}>
+                  <Ionicons name="person-outline" size={20} color={Colors.textPrimary} style={styles.menuIcon} />
+                  <Text style={styles.menuText}>Show Profile</Text>
+                </View>
               </Pressable>
               {role === "patient" && myRole === "caregiver" && (
                 <Pressable style={styles.menuItem} onPress={handleShowReport}>
-                  <Text style={styles.menuText}>Show Report</Text>
+                  <View style={styles.menuRow}>
+                    <Ionicons name="document-text-outline" size={20} color={Colors.textPrimary} style={styles.menuIcon} />
+                    <Text style={styles.menuText}>Show Report</Text>
+                  </View>
                 </Pressable>
               )}
               <Pressable
@@ -85,15 +92,21 @@ const RelationItem = ({
                 onPress={handleAskDelete}
                 disabled={loading}
               >
-                <Text style={[styles.menuText, { color: Colors.error }]}>
-                  {loading ? "Deleting..." : "Delete Relation"}
-                </Text>
+                <View style={styles.menuRow}>
+                  <Ionicons name="trash-outline" size={20} color={Colors.error} style={styles.menuIcon} />
+                  <Text style={[styles.menuText, { color: Colors.error }]}>
+                    {loading ? "Deleting..." : "Delete Relation"}
+                  </Text>
+                </View>
               </Pressable>
               <Pressable
                 style={styles.menuItem}
                 onPress={() => setMenuVisible(false)}
               >
-                <Text style={styles.menuText}>Cancel</Text>
+                <View style={styles.menuRow}>
+                  <Ionicons name="close-outline" size={20} color={Colors.textPrimary} style={styles.menuIcon} />
+                  <Text style={styles.menuText}>Cancel</Text>
+                </View>
               </Pressable>
             </>
           ) : (
@@ -106,16 +119,22 @@ const RelationItem = ({
                 onPress={handleDelete}
                 disabled={loading}
               >
-                <Text style={[styles.menuText, { color: Colors.error }]}>
-                  Yes, Delete
-                </Text>
+                <View style={styles.menuRow}>
+                  <Ionicons name="trash-outline" size={20} color={Colors.error} style={styles.menuIcon} />
+                  <Text style={[styles.menuText, { color: Colors.error }]}>
+                    Yes, Delete
+                  </Text>
+                </View>
               </Pressable>
               <Pressable
                 style={styles.menuItem}
                 onPress={handleCancelDelete}
                 disabled={loading}
               >
-                <Text style={styles.menuText}>Cancel</Text>
+                <View style={styles.menuRow}>
+                  <Ionicons name="close-outline" size={20} color={Colors.textPrimary} style={styles.menuIcon} />
+                  <Text style={styles.menuText}>Cancel</Text>
+                </View>
               </Pressable>
             </>
           )}
@@ -274,6 +293,14 @@ const styles = StyleSheet.create({
   menuItem: {
     paddingVertical: 12,
     paddingHorizontal: 8,
+  },
+  menuRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  menuIcon: {
+    marginRight: 10,
   },
   menuText: {
     fontSize: 16,
