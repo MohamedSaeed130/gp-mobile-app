@@ -7,6 +7,8 @@ This API describes the string commands sent from the application to the laptop, 
 ## Control Signals
 
 - "reset": Terminates current control mode, and stops movement
+- "send_real_time": Turns on real-time vital data stream to the application
+- "stop_real_time": Turns off real-time vital data stream to the application
 
 ## Control Buttons
 

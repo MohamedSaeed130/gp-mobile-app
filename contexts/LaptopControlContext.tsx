@@ -18,6 +18,8 @@ interface LaptopControlContextType {
   speed: { increase: () => void; decrease: () => void };
   selectMode: (mode: ControlMode) => void;
   reset: () => void;
+  sendRealTime: () => void;
+  stopRealTime: () => void;
 }
 
 // Create the context
@@ -99,6 +101,8 @@ export function LaptopControlProvider({
     mode && sendMessage("select_mode:" + mode);
 
   const reset = () => sendMessage("reset");
+  const sendRealTime = () => sendMessage("send_real_time");
+  const stopRealTime = () => sendMessage("stop_real_time");
 
   const value = {
     padMove,
@@ -108,6 +112,8 @@ export function LaptopControlProvider({
     speed,
     selectMode,
     reset,
+    sendRealTime,
+    stopRealTime,
   };
 
   return (
