@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState, useRef } from "react";
 import { LaptopConnection } from "../types/ui/LaptopConnection";
+import { useTokens } from "./TokensContext";
 
 interface LaptopConnectionContextType {
   error: string | null;
@@ -22,6 +23,7 @@ export function LaptopConnectionProvider({
 }: {
   children: ReactNode;
 }) {
+  const { accessToken } = useTokens();
   const [error, setError] = useState<string | null>(null);
   const [laptopConnection, setLaptopConnection] =
     useState<LaptopConnection | null>(null);
@@ -42,7 +44,7 @@ export function LaptopConnectionProvider({
       });
 
       socketRef.current.onopen = () => {
-        console.log("Connected to WebSocket");
+        // Connected to WebSocket
         setError(null);
         // Update only the connection status
         setLaptopConnection((prev) =>
@@ -54,6 +56,8 @@ export function LaptopConnectionProvider({
               }
             : null
         );
+        // Send access token to laptop
+        sendMessage("access_token:"+accessToken);
       };
 
       socketRef.current.onclose = () => {
@@ -68,7 +72,6 @@ export function LaptopConnectionProvider({
       };
 
       socketRef.current.onerror = (event) => {
-        console.log("WebSocket error: ", event);
         setError("WebSocket error occurred");
         setLaptopConnection((prev) =>
           prev
