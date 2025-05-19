@@ -8,8 +8,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useRelations } from "../../contexts/RelationsContext"; // Adjust path as needed
-import { useNotifications } from "../../contexts/NotificationsContext"; // Adjust path as needed
+import { useRelations } from "../../contexts/RelationsContext";
+1;
+import { useNotifications } from "../../contexts/NotificationsContext";
+1;
 import { useUserInfo } from "../../contexts/UserInfoContext";
 import { useLaptopConnection } from "../../contexts/LaptopConnectionContext";
 
@@ -61,6 +63,18 @@ const clientMenuItemsBase: MenuItem[] = [
 
 const caregiverMenuItemsBase: MenuItem[] = [
   {
+    href: "/laptop-connection",
+    title: "Laptop Connection",
+    icon: "laptop-outline",
+    color: "#007AFF", // Default Blue
+  },
+  {
+    href: "/notification-center",
+    title: "Notifications",
+    icon: "notifications-outline",
+    color: "#64B5F6", // A different shade of blue
+  },
+  {
     href: "/relations",
     title: "Relations",
     icon: "people-outline",
@@ -72,17 +86,11 @@ const caregiverMenuItemsBase: MenuItem[] = [
   //   icon: "document-text-outline",
   //   color: "#4CD964", // Light Green
   // },
-  {
-    href: "/notification-center",
-    title: "Notifications",
-    icon: "notifications-outline",
-    color: "#64B5F6", // A different shade of blue
-  },
 ];
 
 const patientMenuItemsBase: MenuItem[] = [
   {
-    href: "/laptop-connection", // Ensure this matches your file path in the 'app' directory
+    href: "/laptop-connection",
     title: "Laptop Connection",
     icon: "laptop-outline",
     color: "#007AFF", // Default Blue
@@ -114,7 +122,6 @@ const HomeScreen = () => {
       : patientMenuItemsBase
   ).map((item) => {
     if (item.href === "/relations") {
-      // you might want to filter for 'incoming' relations based on your data structure.
       const incomingRelationCount = relations.filter(
         (relation) => relation.type === "incoming"
       ).length;
