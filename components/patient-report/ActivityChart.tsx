@@ -12,19 +12,11 @@ import Colors from "../../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTokens } from "../../contexts/TokensContext";
 import { fetchUserVitalStats } from "../../api/usersAPI"; // Ensure this path is correct
-import { UserVitalStatsResponse } from "../../types/api/VitalStats";
+import { VitalStatsResponse, VitalStat } from "../../types/api/VitalStats";
 
 const screenWidth = Dimensions.get("window").width;
 const CHART_CONTAINER_HORIZONTAL_PADDING = 16;
 const CHART_CONTAINER_VERTICAL_PADDING = 14;
-
-// Assuming these interfaces are defined in your api/usersAPI.ts or similar
-interface VitalStat {
-  timestamp: Date;
-  heartRate: number;
-  bloodOxygen: number;
-  temperature: number;
-}
 
 type Duration = "hour" | "day" | "week"; // Define Duration type
 
@@ -297,7 +289,7 @@ const ActivityChart = ({ userId }: { userId: number }) => {
         // --- IMPORTANT CHANGE HERE ---
         // Fetch the raw response object
         // Replace the existing data handling with:
-        const apiResponse: UserVitalStatsResponse = await fetchUserVitalStats(
+        const apiResponse: VitalStatsResponse = await fetchUserVitalStats(
           userId,
           selectedDuration,
           accessToken

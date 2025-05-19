@@ -11,25 +11,19 @@ import Animated, {
 } from "react-native-reanimated";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors"; // Make sure this path is correct based on your project structure
+import { VitalStat } from "../../types/api/VitalStats";
 
 const { width } = Dimensions.get("window");
 
-interface PatientData {
-  heartRate: number;
-  bloodOxygen: number;
-  temperature: number;
-}
-
-interface RealTimeVitalsProps {} // No props needed for this component
-
+type VitalStatWithoutTime = Omit<VitalStat, "timestamp">;
 // Helper function to simulate real-time data
-const generateRandomData = (): PatientData => ({
+const generateRandomData = (): VitalStatWithoutTime => ({
   heartRate: Math.floor(Math.random() * (100 - 60 + 1)) + 60, // 60-100 bpm
   bloodOxygen: Math.floor(Math.random() * (100 - 95 + 1)) + 95, // 95-100% SpO2
   temperature: parseFloat((Math.random() * (37.5 - 36.5) + 36.5).toFixed(1)), // 36.5-37.5 °C
 });
 
-const RealTimeVitals: FC<RealTimeVitalsProps> = () => {
+const RealTimeVitals: FC<{}> = () => {
   const [heartRate, setHeartRate] = useState<number>(80);
   const [bloodOxygen, setBloodOxygen] = useState<number>(98);
   const [temperature, setTemperature] = useState<number>(37.0);
@@ -46,7 +40,7 @@ const RealTimeVitals: FC<RealTimeVitalsProps> = () => {
   // Simulate real-time updates for all vitals
   useEffect(() => {
     const interval = setInterval(() => {
-      const newData: PatientData = generateRandomData();
+      const newData: VitalStatWithoutTime = generateRandomData();
       setHeartRate(newData.heartRate);
       setBloodOxygen(newData.bloodOxygen);
       setTemperature(newData.temperature);

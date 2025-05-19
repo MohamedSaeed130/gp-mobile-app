@@ -7,7 +7,7 @@ export interface VitalStat {
   temperature: number;
 }
 
-export interface UserVitalStatsResponse {
+export interface VitalStatsResponse {
   userId: number;
   size: number;
   duration: Duration;
