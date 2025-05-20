@@ -8,6 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import NotificationList from "../../components/notification-center/NotificationList";
 import NewNotificationModal from "../../components/notification-center/NewNotificationModal";
@@ -30,7 +31,7 @@ export default function NotificationCenterScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [sending, setSending] = useState(false);
   const { accessToken } = useTokens();
-  const { notifications, loading, error, setNotifications } =
+  const { notifications, loading, error, setNotifications, refreshNotifications } =
     useNotifications();
 
   // Mark as read
@@ -116,6 +117,26 @@ export default function NotificationCenterScreen() {
                   size={28}
                   color={Colors.info}
                 />
+              }
+              rightComponent={
+                <Pressable
+                  onPress={refreshNotifications}
+                  style={({ pressed }) => [
+                    {
+                      opacity: pressed ? 0.5 : 1,
+                      marginLeft: 10,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    },
+                  ]}
+                  accessibilityLabel="Refresh notifications"
+                >
+                  {loading ? (
+                    <FontAwesome name="spinner" size={22} color={Colors.primary} style={{ marginLeft: 3 }} />
+                  ) : (
+                    <FontAwesome name="refresh" size={22} color={Colors.primary} style={{ marginLeft: 3 }} />
+                  )}
+                </Pressable>
               }
             />
           }
