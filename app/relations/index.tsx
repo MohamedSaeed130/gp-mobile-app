@@ -11,6 +11,7 @@ import FloatingActionButton from "../../components/relations/FloatingActionButto
 import AddRelationModal from "../../components/relations/AddRelationModal";
 import Colors from "../../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
+import { Pressable } from "react-native";
 import EmptySection from "../../components/relations/EmptySection";
 import { UserInfo } from "../../types/api/Users";
 import * as relationsAPI from "../../api/relationsAPI";
@@ -189,6 +190,26 @@ export default function Relations() {
       <ScreenHeader
         title="Relations"
         icon={<FontAwesome name="users" size={24} color={Colors.primary} />}
+        rightComponent={
+          <Pressable
+            onPress={refreshRelations}
+            style={({ pressed }) => [
+              {
+                opacity: pressed ? 0.5 : 1,
+                marginLeft: 10,
+                flexDirection: "row",
+                alignItems: "center",
+              },
+            ]}
+            accessibilityLabel="Refresh relations"
+          >
+            {loading ? (
+              <FontAwesome name="spinner" size={22} color={Colors.primary} style={{ marginLeft: 3 }} />
+            ) : (
+              <FontAwesome name="refresh" size={22} color={Colors.primary} style={{ marginLeft: 3 }} />
+            )}
+          </Pressable>
+        }
       />
       <ErrorMessage message={errorMessage || error || ""} />
       <RelationsSearch value={searchQuery} onSearch={setSearchQuery} />
