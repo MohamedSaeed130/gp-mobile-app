@@ -48,7 +48,7 @@ const MedicalReportScreen: FC = () => {
     return () => {
       stopRealTime();
     };
-  }, [sendRealTime, stopRealTime]);
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
