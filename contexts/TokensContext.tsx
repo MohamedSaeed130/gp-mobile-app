@@ -29,13 +29,16 @@ export const TokensProvider = ({ children }: { children: ReactNode }) => {
     if (refreshTimeout.current) {
       clearTimeout(refreshTimeout.current);
     }
+
     if (!tokens?.refreshToken || !tokens?.expiresIn) return;
 
-    // Refresh 30 seconds before expiry, fallback to half expiry if short
+    // Calculate the refresh time
     const refreshIn = Math.max(
       (tokens.expiresIn - 30) * 1000,
       tokens.expiresIn * 500
     );
+
+    // Set the new timeout
     refreshTimeout.current = setTimeout(async () => {
       try {
         const refreshed = await authAPI.refresh(tokens.refreshToken!);
@@ -45,9 +48,12 @@ export const TokensProvider = ({ children }: { children: ReactNode }) => {
         setTokens(undefined);
       }
     }, refreshIn);
+
+    // Cleanup function to clear the timeout when the component unmounts or dependencies change
     return () => {
       if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
     };
+    // Only depend on refreshToken and expiresIn to schedule the refresh
   }, [tokens?.refreshToken, tokens?.expiresIn]);
 
   return (
