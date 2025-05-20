@@ -27,7 +27,8 @@ export const RelationsProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRelations = async () => {
+  // Refresh relations and update context
+  const refreshRelations = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -41,7 +42,7 @@ export const RelationsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchRelations();
+    refreshRelations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
@@ -51,7 +52,7 @@ export const RelationsProvider = ({ children }: { children: ReactNode }) => {
         relations,
         loading,
         error,
-        refreshRelations: fetchRelations,
+        refreshRelations,
         setRelations,
       }}
     >

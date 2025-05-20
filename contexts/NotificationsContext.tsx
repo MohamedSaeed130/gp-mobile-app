@@ -27,7 +27,8 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchNotifications = async () => {
+  // Refresh notifications and update context
+  const refreshNotifications = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -44,7 +45,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
   };
 
   useEffect(() => {
-    fetchNotifications();
+    refreshNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
@@ -54,7 +55,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         notifications,
         loading,
         error,
-        refreshNotifications: fetchNotifications,
+        refreshNotifications,
         setNotifications,
       }}
     >
