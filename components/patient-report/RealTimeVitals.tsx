@@ -57,8 +57,8 @@ const RealTimeVitals: FC<RealTimeVitalsProps> = () => {
       );
 
       let newSpo2ColorValue: number = 0; // Normal
-      if (contextBloodOxygen < 97) newSpo2ColorValue = 1; // Warning
-      if (contextBloodOxygen < 95) newSpo2ColorValue = 2; // Critical
+      if (contextBloodOxygen < 94) newSpo2ColorValue = 1; // Warning
+      if (contextBloodOxygen < 90) newSpo2ColorValue = 2; // Critical
       spo2Color.value = withTiming(newSpo2ColorValue, { duration: 500 });
     }
   }, [contextBloodOxygen]);
@@ -201,9 +201,9 @@ const RealTimeVitals: FC<RealTimeVitalsProps> = () => {
         </Animated.Text>
         <Text style={styles.statusText}>
           {contextBloodOxygen !== null
-            ? contextBloodOxygen < 95
+            ? contextBloodOxygen < 90
               ? "Low"
-              : contextBloodOxygen < 97
+              : contextBloodOxygen < 94
               ? "Mildly Low"
               : "Normal"
             : "---"}

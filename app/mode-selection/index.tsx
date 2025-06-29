@@ -80,7 +80,7 @@ export default function ModeSelectionScreen() {
   const getStyledIcon = (icon: ReactElement, isSelected: boolean) => {
     return React.cloneElement(icon, {
       color: isSelected ? Colors.background : Colors.primary,
-    });
+    } as any);
   };
 
   return (
