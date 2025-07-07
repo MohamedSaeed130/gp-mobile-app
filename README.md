@@ -1,4 +1,4 @@
-# Healthcarte & Smart Wheelchair Control Application
+# Healthcare & Smart Wheelchair Control App
 
 Cross-platform mobile app for controlling smart wheelchair remotely and tracking patients' health status.
 
