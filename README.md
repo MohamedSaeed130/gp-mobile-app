@@ -5,10 +5,6 @@ Cross-platform mobile app for controlling smart wheelchair remotely and tracking
 ## 📹 Demo
 
 
-
-## 📱 Screenshots
-
-
 ## ✨ Features
 
 - Create accounts with patient or caregiver roles
