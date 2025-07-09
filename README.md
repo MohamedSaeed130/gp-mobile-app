@@ -1,9 +1,11 @@
 # Healthcare & Smart Wheelchair Control App
 
 Cross-platform mobile app for controlling smart wheelchair remotely and tracking patients' health status.
+## 🎬 Demo
 
-## 📹 Demo
-
+<video src="assets/mobile-app-demo.mp4" controls width="640">
+  Your browser does not support the video tag.
+</video>
 
 ## ✨ Features
 
